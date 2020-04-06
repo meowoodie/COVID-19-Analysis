@@ -319,8 +319,7 @@ fips,county_name,state_abbr,state_name,long_name,sumlev,region,division,state,co
 10001,Kent County,DE,Delaware,Kent County DE,50,3,5,10,1,3-5-10-1,South,South Atlantic
 10003,New Castle County,DE,Delaware,New Castle County DE,50,3,5,10,3,3-5-10-3,South,South Atlantic
 10005,Sussex County,DE,Delaware,Sussex County DE,50,3,5,10,5,3-5-10-5,South,South Atlantic
-11001,District of Columbia,DC,District of Columbia,District of Columbia DC,40,3,5,11,0,3-5-11-0,South,South Atlantic
-11001,District of Columbia,DC,District of Columbia,District of Columbia DC,50,3,5,11,1,3-5-11-1,South,South Atlantic
+11001,District of Columbia,DC,District of Columbia,District of Columbia County DC,40,3,5,11,0,3-5-11-0,South,South Atlantic
 12001,Alachua County,FL,Florida,Alachua County FL,50,3,5,12,1,3-5-12-1,South,South Atlantic
 12003,Baker County,FL,Florida,Baker County FL,50,3,5,12,3,3-5-12-3,South,South Atlantic
 12005,Bay County,FL,Florida,Bay County FL,50,3,5,12,5,3-5-12-5,South,South Atlantic
@@ -1114,70 +1113,70 @@ fips,county_name,state_abbr,state_name,long_name,sumlev,region,division,state,co
 21235,Whitley County,KY,Kentucky,Whitley County KY,50,3,6,21,235,3-6-21-235,South,East South Central
 21237,Wolfe County,KY,Kentucky,Wolfe County KY,50,3,6,21,237,3-6-21-237,South,East South Central
 21239,Woodford County,KY,Kentucky,Woodford County KY,50,3,6,21,239,3-6-21-239,South,East South Central
-22001,Acadia Parish,LA,Louisiana,Acadia Parish LA,50,3,7,22,1,3-7-22-1,South,West South Central
-22003,Allen Parish,LA,Louisiana,Allen Parish LA,50,3,7,22,3,3-7-22-3,South,West South Central
-22005,Ascension Parish,LA,Louisiana,Ascension Parish LA,50,3,7,22,5,3-7-22-5,South,West South Central
-22007,Assumption Parish,LA,Louisiana,Assumption Parish LA,50,3,7,22,7,3-7-22-7,South,West South Central
-22009,Avoyelles Parish,LA,Louisiana,Avoyelles Parish LA,50,3,7,22,9,3-7-22-9,South,West South Central
-22011,Beauregard Parish,LA,Louisiana,Beauregard Parish LA,50,3,7,22,11,3-7-22-11,South,West South Central
-22013,Bienville Parish,LA,Louisiana,Bienville Parish LA,50,3,7,22,13,3-7-22-13,South,West South Central
-22015,Bossier Parish,LA,Louisiana,Bossier Parish LA,50,3,7,22,15,3-7-22-15,South,West South Central
-22017,Caddo Parish,LA,Louisiana,Caddo Parish LA,50,3,7,22,17,3-7-22-17,South,West South Central
-22019,Calcasieu Parish,LA,Louisiana,Calcasieu Parish LA,50,3,7,22,19,3-7-22-19,South,West South Central
-22021,Caldwell Parish,LA,Louisiana,Caldwell Parish LA,50,3,7,22,21,3-7-22-21,South,West South Central
-22023,Cameron Parish,LA,Louisiana,Cameron Parish LA,50,3,7,22,23,3-7-22-23,South,West South Central
-22025,Catahoula Parish,LA,Louisiana,Catahoula Parish LA,50,3,7,22,25,3-7-22-25,South,West South Central
-22027,Claiborne Parish,LA,Louisiana,Claiborne Parish LA,50,3,7,22,27,3-7-22-27,South,West South Central
-22029,Concordia Parish,LA,Louisiana,Concordia Parish LA,50,3,7,22,29,3-7-22-29,South,West South Central
-22031,De Soto Parish,LA,Louisiana,De Soto Parish LA,50,3,7,22,31,3-7-22-31,South,West South Central
-22033,East Baton Rouge Parish,LA,Louisiana,East Baton Rouge Parish LA,50,3,7,22,33,3-7-22-33,South,West South Central
-22035,East Carroll Parish,LA,Louisiana,East Carroll Parish LA,50,3,7,22,35,3-7-22-35,South,West South Central
-22037,East Feliciana Parish,LA,Louisiana,East Feliciana Parish LA,50,3,7,22,37,3-7-22-37,South,West South Central
-22039,Evangeline Parish,LA,Louisiana,Evangeline Parish LA,50,3,7,22,39,3-7-22-39,South,West South Central
-22041,Franklin Parish,LA,Louisiana,Franklin Parish LA,50,3,7,22,41,3-7-22-41,South,West South Central
-22043,Grant Parish,LA,Louisiana,Grant Parish LA,50,3,7,22,43,3-7-22-43,South,West South Central
-22045,Iberia Parish,LA,Louisiana,Iberia Parish LA,50,3,7,22,45,3-7-22-45,South,West South Central
-22047,Iberville Parish,LA,Louisiana,Iberville Parish LA,50,3,7,22,47,3-7-22-47,South,West South Central
-22049,Jackson Parish,LA,Louisiana,Jackson Parish LA,50,3,7,22,49,3-7-22-49,South,West South Central
-22051,Jefferson Parish,LA,Louisiana,Jefferson Parish LA,50,3,7,22,51,3-7-22-51,South,West South Central
-22053,Jefferson Davis Parish,LA,Louisiana,Jefferson Davis Parish LA,50,3,7,22,53,3-7-22-53,South,West South Central
-22055,Lafayette Parish,LA,Louisiana,Lafayette Parish LA,50,3,7,22,55,3-7-22-55,South,West South Central
-22057,Lafourche Parish,LA,Louisiana,Lafourche Parish LA,50,3,7,22,57,3-7-22-57,South,West South Central
-22059,La Salle Parish,LA,Louisiana,La Salle Parish LA,50,3,7,22,59,3-7-22-59,South,West South Central
-22061,Lincoln Parish,LA,Louisiana,Lincoln Parish LA,50,3,7,22,61,3-7-22-61,South,West South Central
-22063,Livingston Parish,LA,Louisiana,Livingston Parish LA,50,3,7,22,63,3-7-22-63,South,West South Central
-22065,Madison Parish,LA,Louisiana,Madison Parish LA,50,3,7,22,65,3-7-22-65,South,West South Central
-22067,Morehouse Parish,LA,Louisiana,Morehouse Parish LA,50,3,7,22,67,3-7-22-67,South,West South Central
-22069,Natchitoches Parish,LA,Louisiana,Natchitoches Parish LA,50,3,7,22,69,3-7-22-69,South,West South Central
-22071,Orleans Parish,LA,Louisiana,Orleans Parish LA,50,3,7,22,71,3-7-22-71,South,West South Central
-22073,Ouachita Parish,LA,Louisiana,Ouachita Parish LA,50,3,7,22,73,3-7-22-73,South,West South Central
-22075,Plaquemines Parish,LA,Louisiana,Plaquemines Parish LA,50,3,7,22,75,3-7-22-75,South,West South Central
-22077,Pointe Coupee Parish,LA,Louisiana,Pointe Coupee Parish LA,50,3,7,22,77,3-7-22-77,South,West South Central
-22079,Rapides Parish,LA,Louisiana,Rapides Parish LA,50,3,7,22,79,3-7-22-79,South,West South Central
-22081,Red River Parish,LA,Louisiana,Red River Parish LA,50,3,7,22,81,3-7-22-81,South,West South Central
-22083,Richland Parish,LA,Louisiana,Richland Parish LA,50,3,7,22,83,3-7-22-83,South,West South Central
-22085,Sabine Parish,LA,Louisiana,Sabine Parish LA,50,3,7,22,85,3-7-22-85,South,West South Central
-22087,St. Bernard Parish,LA,Louisiana,St. Bernard Parish LA,50,3,7,22,87,3-7-22-87,South,West South Central
-22089,St. Charles Parish,LA,Louisiana,St. Charles Parish LA,50,3,7,22,89,3-7-22-89,South,West South Central
-22091,St. Helena Parish,LA,Louisiana,St. Helena Parish LA,50,3,7,22,91,3-7-22-91,South,West South Central
-22093,St. James Parish,LA,Louisiana,St. James Parish LA,50,3,7,22,93,3-7-22-93,South,West South Central
-22095,St. John the Baptist Parish,LA,Louisiana,St. John the Baptist Parish LA,50,3,7,22,95,3-7-22-95,South,West South Central
-22097,St. Landry Parish,LA,Louisiana,St. Landry Parish LA,50,3,7,22,97,3-7-22-97,South,West South Central
-22099,St. Martin Parish,LA,Louisiana,St. Martin Parish LA,50,3,7,22,99,3-7-22-99,South,West South Central
-22101,St. Mary Parish,LA,Louisiana,St. Mary Parish LA,50,3,7,22,101,3-7-22-101,South,West South Central
-22103,St. Tammany Parish,LA,Louisiana,St. Tammany Parish LA,50,3,7,22,103,3-7-22-103,South,West South Central
-22105,Tangipahoa Parish,LA,Louisiana,Tangipahoa Parish LA,50,3,7,22,105,3-7-22-105,South,West South Central
-22107,Tensas Parish,LA,Louisiana,Tensas Parish LA,50,3,7,22,107,3-7-22-107,South,West South Central
-22109,Terrebonne Parish,LA,Louisiana,Terrebonne Parish LA,50,3,7,22,109,3-7-22-109,South,West South Central
-22111,Union Parish,LA,Louisiana,Union Parish LA,50,3,7,22,111,3-7-22-111,South,West South Central
-22113,Vermilion Parish,LA,Louisiana,Vermilion Parish LA,50,3,7,22,113,3-7-22-113,South,West South Central
-22115,Vernon Parish,LA,Louisiana,Vernon Parish LA,50,3,7,22,115,3-7-22-115,South,West South Central
-22117,Washington Parish,LA,Louisiana,Washington Parish LA,50,3,7,22,117,3-7-22-117,South,West South Central
-22119,Webster Parish,LA,Louisiana,Webster Parish LA,50,3,7,22,119,3-7-22-119,South,West South Central
-22121,West Baton Rouge Parish,LA,Louisiana,West Baton Rouge Parish LA,50,3,7,22,121,3-7-22-121,South,West South Central
-22123,West Carroll Parish,LA,Louisiana,West Carroll Parish LA,50,3,7,22,123,3-7-22-123,South,West South Central
-22125,West Feliciana Parish,LA,Louisiana,West Feliciana Parish LA,50,3,7,22,125,3-7-22-125,South,West South Central
-22127,Winn Parish,LA,Louisiana,Winn Parish LA,50,3,7,22,127,3-7-22-127,South,West South Central
+22001,Acadia County,LA,Louisiana,Acadia County LA,50,3,7,22,1,3-7-22-1,South,West South Central
+22003,Allen County,LA,Louisiana,Allen County LA,50,3,7,22,3,3-7-22-3,South,West South Central
+22005,Ascension County,LA,Louisiana,Ascension County LA,50,3,7,22,5,3-7-22-5,South,West South Central
+22007,Assumption County,LA,Louisiana,Assumption County LA,50,3,7,22,7,3-7-22-7,South,West South Central
+22009,Avoyelles County,LA,Louisiana,Avoyelles County LA,50,3,7,22,9,3-7-22-9,South,West South Central
+22011,Beauregard County,LA,Louisiana,Beauregard County LA,50,3,7,22,11,3-7-22-11,South,West South Central
+22013,Bienville County,LA,Louisiana,Bienville County LA,50,3,7,22,13,3-7-22-13,South,West South Central
+22015,Bossier County,LA,Louisiana,Bossier County LA,50,3,7,22,15,3-7-22-15,South,West South Central
+22017,Caddo County,LA,Louisiana,Caddo County LA,50,3,7,22,17,3-7-22-17,South,West South Central
+22019,Calcasieu County,LA,Louisiana,Calcasieu County LA,50,3,7,22,19,3-7-22-19,South,West South Central
+22021,Caldwell County,LA,Louisiana,Caldwell County LA,50,3,7,22,21,3-7-22-21,South,West South Central
+22023,Cameron County,LA,Louisiana,Cameron County LA,50,3,7,22,23,3-7-22-23,South,West South Central
+22025,Catahoula County,LA,Louisiana,Catahoula County LA,50,3,7,22,25,3-7-22-25,South,West South Central
+22027,Claiborne County,LA,Louisiana,Claiborne County LA,50,3,7,22,27,3-7-22-27,South,West South Central
+22029,Concordia County,LA,Louisiana,Concordia County LA,50,3,7,22,29,3-7-22-29,South,West South Central
+22031,De Soto County,LA,Louisiana,De Soto County LA,50,3,7,22,31,3-7-22-31,South,West South Central
+22033,East Baton Rouge County,LA,Louisiana,East Baton Rouge County LA,50,3,7,22,33,3-7-22-33,South,West South Central
+22035,East Carroll County,LA,Louisiana,East Carroll County LA,50,3,7,22,35,3-7-22-35,South,West South Central
+22037,East Feliciana County,LA,Louisiana,East Feliciana County LA,50,3,7,22,37,3-7-22-37,South,West South Central
+22039,Evangeline County,LA,Louisiana,Evangeline County LA,50,3,7,22,39,3-7-22-39,South,West South Central
+22041,Franklin County,LA,Louisiana,Franklin County LA,50,3,7,22,41,3-7-22-41,South,West South Central
+22043,Grant County,LA,Louisiana,Grant County LA,50,3,7,22,43,3-7-22-43,South,West South Central
+22045,Iberia County,LA,Louisiana,Iberia County LA,50,3,7,22,45,3-7-22-45,South,West South Central
+22047,Iberville County,LA,Louisiana,Iberville County LA,50,3,7,22,47,3-7-22-47,South,West South Central
+22049,Jackson County,LA,Louisiana,Jackson County LA,50,3,7,22,49,3-7-22-49,South,West South Central
+22051,Jefferson County,LA,Louisiana,Jefferson County LA,50,3,7,22,51,3-7-22-51,South,West South Central
+22053,Jefferson Davis County,LA,Louisiana,Jefferson Davis County LA,50,3,7,22,53,3-7-22-53,South,West South Central
+22055,Lafayette County,LA,Louisiana,Lafayette County LA,50,3,7,22,55,3-7-22-55,South,West South Central
+22057,Lafourche County,LA,Louisiana,Lafourche County LA,50,3,7,22,57,3-7-22-57,South,West South Central
+22059,La Salle County,LA,Louisiana,La Salle County LA,50,3,7,22,59,3-7-22-59,South,West South Central
+22061,Lincoln County,LA,Louisiana,Lincoln County LA,50,3,7,22,61,3-7-22-61,South,West South Central
+22063,Livingston County,LA,Louisiana,Livingston County LA,50,3,7,22,63,3-7-22-63,South,West South Central
+22065,Madison County,LA,Louisiana,Madison County LA,50,3,7,22,65,3-7-22-65,South,West South Central
+22067,Morehouse County,LA,Louisiana,Morehouse County LA,50,3,7,22,67,3-7-22-67,South,West South Central
+22069,Natchitoches County,LA,Louisiana,Natchitoches County LA,50,3,7,22,69,3-7-22-69,South,West South Central
+22071,Orleans County,LA,Louisiana,Orleans County LA,50,3,7,22,71,3-7-22-71,South,West South Central
+22073,Ouachita County,LA,Louisiana,Ouachita County LA,50,3,7,22,73,3-7-22-73,South,West South Central
+22075,Plaquemines County,LA,Louisiana,Plaquemines County LA,50,3,7,22,75,3-7-22-75,South,West South Central
+22077,Pointe Coupee County,LA,Louisiana,Pointe Coupee County LA,50,3,7,22,77,3-7-22-77,South,West South Central
+22079,Rapides County,LA,Louisiana,Rapides County LA,50,3,7,22,79,3-7-22-79,South,West South Central
+22081,Red River County,LA,Louisiana,Red River County LA,50,3,7,22,81,3-7-22-81,South,West South Central
+22083,Richland County,LA,Louisiana,Richland County LA,50,3,7,22,83,3-7-22-83,South,West South Central
+22085,Sabine County,LA,Louisiana,Sabine County LA,50,3,7,22,85,3-7-22-85,South,West South Central
+22087,St. Bernard County,LA,Louisiana,St. Bernard County LA,50,3,7,22,87,3-7-22-87,South,West South Central
+22089,St. Charles County,LA,Louisiana,St. Charles County LA,50,3,7,22,89,3-7-22-89,South,West South Central
+22091,St. Helena County,LA,Louisiana,St. Helena County LA,50,3,7,22,91,3-7-22-91,South,West South Central
+22093,St. James County,LA,Louisiana,St. James County LA,50,3,7,22,93,3-7-22-93,South,West South Central
+22095,St. John the Baptist County,LA,Louisiana,St. John the Baptist County LA,50,3,7,22,95,3-7-22-95,South,West South Central
+22097,St. Landry County,LA,Louisiana,St. Landry County LA,50,3,7,22,97,3-7-22-97,South,West South Central
+22099,St. Martin County,LA,Louisiana,St. Martin County LA,50,3,7,22,99,3-7-22-99,South,West South Central
+22101,St. Mary County,LA,Louisiana,St. Mary County LA,50,3,7,22,101,3-7-22-101,South,West South Central
+22103,St. Tammany County,LA,Louisiana,St. Tammany County LA,50,3,7,22,103,3-7-22-103,South,West South Central
+22105,Tangipahoa County,LA,Louisiana,Tangipahoa County LA,50,3,7,22,105,3-7-22-105,South,West South Central
+22107,Tensas County,LA,Louisiana,Tensas County LA,50,3,7,22,107,3-7-22-107,South,West South Central
+22109,Terrebonne County,LA,Louisiana,Terrebonne County LA,50,3,7,22,109,3-7-22-109,South,West South Central
+22111,Union County,LA,Louisiana,Union County LA,50,3,7,22,111,3-7-22-111,South,West South Central
+22113,Vermilion County,LA,Louisiana,Vermilion County LA,50,3,7,22,113,3-7-22-113,South,West South Central
+22115,Vernon County,LA,Louisiana,Vernon County LA,50,3,7,22,115,3-7-22-115,South,West South Central
+22117,Washington County,LA,Louisiana,Washington County LA,50,3,7,22,117,3-7-22-117,South,West South Central
+22119,Webster County,LA,Louisiana,Webster County LA,50,3,7,22,119,3-7-22-119,South,West South Central
+22121,West Baton Rouge County,LA,Louisiana,West Baton Rouge County LA,50,3,7,22,121,3-7-22-121,South,West South Central
+22123,West Carroll County,LA,Louisiana,West Carroll County LA,50,3,7,22,123,3-7-22-123,South,West South Central
+22125,West Feliciana County,LA,Louisiana,West Feliciana County LA,50,3,7,22,125,3-7-22-125,South,West South Central
+22127,Winn County,LA,Louisiana,Winn County LA,50,3,7,22,127,3-7-22-127,South,West South Central
 23001,Androscoggin County,ME,Maine,Androscoggin County ME,50,1,1,23,1,1-1-23-1,Northeast,New England
 23003,Aroostook County,ME,Maine,Aroostook County ME,50,1,1,23,3,1-1-23-3,Northeast,New England
 23005,Cumberland County,ME,Maine,Cumberland County ME,50,1,1,23,5,1-1-23-5,Northeast,New England
@@ -1217,7 +1216,7 @@ fips,county_name,state_abbr,state_name,long_name,sumlev,region,division,state,co
 24043,Washington County,MD,Maryland,Washington County MD,50,3,5,24,43,3-5-24-43,South,South Atlantic
 24045,Wicomico County,MD,Maryland,Wicomico County MD,50,3,5,24,45,3-5-24-45,South,South Atlantic
 24047,Worcester County,MD,Maryland,Worcester County MD,50,3,5,24,47,3-5-24-47,South,South Atlantic
-24510,Baltimore city,MD,Maryland,Baltimore city MD,50,3,5,24,510,3-5-24-510,South,South Atlantic
+24510,Baltimore city County,MD,Maryland,Baltimore city County MD,50,3,5,24,510,3-5-24-510,South,South Atlantic
 25001,Barnstable County,MA,Massachusetts,Barnstable County MA,50,1,1,25,1,1-1-25-1,Northeast,New England
 25003,Berkshire County,MA,Massachusetts,Berkshire County MA,50,1,1,25,3,1-1-25-3,Northeast,New England
 25005,Bristol County,MA,Massachusetts,Bristol County MA,50,1,1,25,5,1-1-25-5,Northeast,New England
@@ -2935,27 +2934,27 @@ fips,county_name,state_abbr,state_name,long_name,sumlev,region,division,state,co
 51650,Hampton city,VA,Virginia,Hampton city VA,50,3,5,51,650,3-5-51-650,South,South Atlantic
 51660,Harrisonburg city,VA,Virginia,Harrisonburg city VA,50,3,5,51,660,3-5-51-660,South,South Atlantic
 51670,Hopewell city,VA,Virginia,Hopewell city VA,50,3,5,51,670,3-5-51-670,South,South Atlantic
-51678,Lexington city,VA,Virginia,Lexington city VA,50,3,5,51,678,3-5-51-678,South,South Atlantic
-51680,Lynchburg city,VA,Virginia,Lynchburg city VA,50,3,5,51,680,3-5-51-680,South,South Atlantic
-51683,Manassas city,VA,Virginia,Manassas city VA,50,3,5,51,683,3-5-51-683,South,South Atlantic
-51685,Manassas Park city,VA,Virginia,Manassas Park city VA,50,3,5,51,685,3-5-51-685,South,South Atlantic
-51690,Martinsville city,VA,Virginia,Martinsville city VA,50,3,5,51,690,3-5-51-690,South,South Atlantic
-51700,Newport News city,VA,Virginia,Newport News city VA,50,3,5,51,700,3-5-51-700,South,South Atlantic
-51710,Norfolk city,VA,Virginia,Norfolk city VA,50,3,5,51,710,3-5-51-710,South,South Atlantic
-51720,Norton city,VA,Virginia,Norton city VA,50,3,5,51,720,3-5-51-720,South,South Atlantic
-51730,Petersburg city,VA,Virginia,Petersburg city VA,50,3,5,51,730,3-5-51-730,South,South Atlantic
-51735,Poquoson city,VA,Virginia,Poquoson city VA,50,3,5,51,735,3-5-51-735,South,South Atlantic
-51740,Portsmouth city,VA,Virginia,Portsmouth city VA,50,3,5,51,740,3-5-51-740,South,South Atlantic
-51750,Radford city,VA,Virginia,Radford city VA,50,3,5,51,750,3-5-51-750,South,South Atlantic
-51760,Richmond city,VA,Virginia,Richmond city VA,50,3,5,51,760,3-5-51-760,South,South Atlantic
-51770,Roanoke city,VA,Virginia,Roanoke city VA,50,3,5,51,770,3-5-51-770,South,South Atlantic
-51775,Salem city,VA,Virginia,Salem city VA,50,3,5,51,775,3-5-51-775,South,South Atlantic
-51790,Staunton city,VA,Virginia,Staunton city VA,50,3,5,51,790,3-5-51-790,South,South Atlantic
-51800,Suffolk city,VA,Virginia,Suffolk city VA,50,3,5,51,800,3-5-51-800,South,South Atlantic
-51810,Virginia Beach city,VA,Virginia,Virginia Beach city VA,50,3,5,51,810,3-5-51-810,South,South Atlantic
-51820,Waynesboro city,VA,Virginia,Waynesboro city VA,50,3,5,51,820,3-5-51-820,South,South Atlantic
-51830,Williamsburg city,VA,Virginia,Williamsburg city VA,50,3,5,51,830,3-5-51-830,South,South Atlantic
-51840,Winchester city,VA,Virginia,Winchester city VA,50,3,5,51,840,3-5-51-840,South,South Atlantic
+51678,Lexington County,VA,Virginia,Lexington County VA,50,3,5,51,678,3-5-51-678,South,South Atlantic
+51680,Lynchburg County,VA,Virginia,Lynchburg County VA,50,3,5,51,680,3-5-51-680,South,South Atlantic
+51683,Manassas County,VA,Virginia,Manassas County VA,50,3,5,51,683,3-5-51-683,South,South Atlantic
+51685,Manassas Park County,VA,Virginia,Manassas Park County VA,50,3,5,51,685,3-5-51-685,South,South Atlantic
+51690,Martinsville County,VA,Virginia,Martinsville County VA,50,3,5,51,690,3-5-51-690,South,South Atlantic
+51700,Newport News County,VA,Virginia,Newport News County VA,50,3,5,51,700,3-5-51-700,South,South Atlantic
+51710,Norfolk County,VA,Virginia,Norfolk County VA,50,3,5,51,710,3-5-51-710,South,South Atlantic
+51720,Norton County,VA,Virginia,Norton County VA,50,3,5,51,720,3-5-51-720,South,South Atlantic
+51730,Petersburg County,VA,Virginia,Petersburg County VA,50,3,5,51,730,3-5-51-730,South,South Atlantic
+51735,Poquoson County,VA,Virginia,Poquoson County VA,50,3,5,51,735,3-5-51-735,South,South Atlantic
+51740,Portsmouth County,VA,Virginia,Portsmouth County VA,50,3,5,51,740,3-5-51-740,South,South Atlantic
+51750,Radford County,VA,Virginia,Radford County VA,50,3,5,51,750,3-5-51-750,South,South Atlantic
+51760,Richmond County,VA,Virginia,Richmond County VA,50,3,5,51,760,3-5-51-760,South,South Atlantic
+51770,Roanoke County,VA,Virginia,Roanoke County VA,50,3,5,51,770,3-5-51-770,South,South Atlantic
+51775,Salem County,VA,Virginia,Salem County VA,50,3,5,51,775,3-5-51-775,South,South Atlantic
+51790,Staunton County,VA,Virginia,Staunton County VA,50,3,5,51,790,3-5-51-790,South,South Atlantic
+51800,Suffolk County,VA,Virginia,Suffolk County VA,50,3,5,51,800,3-5-51-800,South,South Atlantic
+51810,Virginia Beach County,VA,Virginia,Virginia Beach County VA,50,3,5,51,810,3-5-51-810,South,South Atlantic
+51820,Waynesboro County,VA,Virginia,Waynesboro County VA,50,3,5,51,820,3-5-51-820,South,South Atlantic
+51830,Williamsburg County,VA,Virginia,Williamsburg County VA,50,3,5,51,830,3-5-51-830,South,South Atlantic
+51840,Winchester County,VA,Virginia,Winchester County VA,50,3,5,51,840,3-5-51-840,South,South Atlantic
 53001,Adams County,WA,Washington,Adams County WA,50,4,9,53,1,4-9-53-1,West,Pacific
 53003,Asotin County,WA,Washington,Asotin County WA,50,4,9,53,3,4-9-53-3,West,Pacific
 53005,Benton County,WA,Washington,Benton County WA,50,4,9,53,5,4-9-53-5,West,Pacific

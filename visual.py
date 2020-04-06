@@ -20,7 +20,7 @@ for date in days:
     def style_function(feature):
         county = str(int(feature['id'][-5:]))
         try:
-            data = covid19.at[county, "death"]
+            data = covid19.at[county, "confirmed"]
             data = np.log(1e-1) if data <= 0. else np.log(data)
         except Exception as e:
             data = np.log(1e-1)
@@ -42,7 +42,7 @@ for date in days:
         style_function=style_function
     ).add_to(m)
 
-    m.save("result_death/covid19-death-%s.html" % date)
+    m.save("result_confirmed/covid19-confirmed-%s.html" % date)
 
 # driver = selenium.webdriver.PhantomJS()
 # driver.set_window_size(4000, 3000)  # choose a resolution

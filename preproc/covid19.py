@@ -74,5 +74,7 @@ maxdeath = covid19bydate[days[-1]]['death'].max()
 
 if __name__ == "__main__":
     pd.set_option('display.max_rows', None)
+    print(list(set(missedq)))
+    print(len(set(missedq)))
     print(covid19bycounty["13121"].cumsum())
     # print(covid19bydate[days[-1]])
