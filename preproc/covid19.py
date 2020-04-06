@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import requests
 import numpy as np
 import pandas as pd
 from datetime import date, timedelta
@@ -10,7 +11,7 @@ from collections import defaultdict
 covid19bycounty = {}       # get cumsum value: covid19bycounty[fips].cumsum()
 covid19bydate   = {}       
 
-# initialize the county-wise dataframe of covid-19 
+# initialize the county-wise dataframe of covid-19  
 sdate = date(2020, 1, 1)   # start date
 edate = date(2020, 4, 4)   # end date
 delta = edate - sdate      # as timedelta
@@ -23,7 +24,6 @@ df0   = pd.DataFrame(init, index=days, columns=cols)
 with open("data/us-fips.csv", "r") as fdict:
     data = [ line.strip("\n").split(",") for line in list(fdict)[1:] ]
     fips = { d[4].lower(): d[0] for d in data }
-
 # covid-19 by county time series data from 1-point-3-acres
 with open("data/us-1point3acres-april-5.csv", "r") as f1p3a:
     missedq = []
@@ -40,6 +40,18 @@ with open("data/us-1point3acres-april-5.csv", "r") as f1p3a:
         except Exception as e:
             missedq.append(query)
 
+# # covid-19 by county time series data from nytimes
+# # https://github.com/COVIDExposureIndices/COVIDExposureIndices
+# url = 'https://raw.githubusercontent.com/nytimes/covid-19-data/master/us-counties.csv'
+# nytimesdf = requests.get(url).text.split("\n")
+# for line in nytimesdf[1:]:
+#     d = line.strip("").split(",")
+#     date, county, state, fips, confirmed, death = d
+#     if fips not in covid19bycounty.keys():
+#         covid19bycounty[fips] = df0.copy()
+#     covid19bycounty[fips].at[date, "confirmed"] += int(confirmed)
+#     covid19bycounty[fips].at[date, "death"]     += int(death)
+
 # initialize the day-wise dataframe of covid-19 
 counties = list(covid19bycounty.keys())
 counties.sort()
@@ -54,6 +66,7 @@ for date in days:
         covid19bydate[date].at[county, "confirmed"] = covid19cumsum[county].at[date, "confirmed"]
         covid19bydate[date].at[county, "death"]     = covid19cumsum[county].at[date, "death"]
 
+# maximum confirmed and death
 maxconf  = covid19bydate[days[-1]]['confirmed'].max()
 maxdeath = covid19bydate[days[-1]]['death'].max()
 
@@ -61,7 +74,5 @@ maxdeath = covid19bydate[days[-1]]['death'].max()
 
 if __name__ == "__main__":
     pd.set_option('display.max_rows', None)
-    print(list(set(missedq)))
-    print(len(list(set(missedq))))
-    # print(covid19bycounty["13121"].cumsum())
+    print(covid19bycounty["13121"].cumsum())
     # print(covid19bydate[days[-1]])
