@@ -3,7 +3,9 @@
 
 import arrow
 import numpy as np
-from sklearn.linear_model import ElasticNet
+from sklearn.linear_model import ElasticNet, Ridge
+from sklearn.preprocessing import StandardScaler
+from scipy.optimize import nnls
 from scipy.sparse import linalg, csr_matrix
 
 #--------------------------------------------------------------------------
@@ -72,9 +74,16 @@ x = csr_matrix(
     shape=(n_weeks * n_counties, p * n_counties * n_counties))
 
 print("[%s] start fitting model..." % arrow.now())
-regr = ElasticNet(random_state=0, positive=True, alpha=1., l1_ratio=0.5)
-regr.fit(x, y)
+# data standardization
+scaler = StandardScaler(with_mean=False)
+scaler.fit(x)
+x      = scaler.transform(x)
 
-beta = np.load("coef.npy")
+# ridge regression
+regr = Ridge(alpha=.1)
+regr.fit(x, y)
+beta = regr.coef_
+
+# save results
 beta = beta.reshape(p, n_counties, n_counties)
-np.save("coef.npy", regr.coef_)
+np.save("ridge-beta.npy", beta)

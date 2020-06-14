@@ -6,22 +6,50 @@ import json
 import folium
 import branca
 import numpy as np
-import pandas as pd
-import selenium.webdriver
+# import pandas as pd
+# import selenium.webdriver
+from preproc import uscountygeo
 
-from preproc import uscountygeo, covid19bydate, maxdeath, maxconf, days
+#--------------------------------------------------------------------------
+#
+# META DATA AND CONFIGURATIONS
+#
+#--------------------------------------------------------------------------
 
-for date in days:
-    print(date)
+# - Number of lags
+p = 18
+# - list of all counties
+#   shape: [ n_counties ]
+I = np.load("/Users/woodie/Desktop/processed_data/counties.npy").tolist()
+# - coefficient 
+#   shape: [ p, n_counties, n_counties ]
+X = np.load("/Users/woodie/Desktop/processed_data/conf_cases.npy")
+# beta      = np.load("ridge-beta.npy")
+# newyorkid = I.index("53033")
+# X         = beta[:, newyorkid, :]
+# - file name
+filename = "covid19-confirmed-week"
 
-    colorscale = branca.colormap.linear.YlOrRd_09.scale(np.log(1e-1), np.log(maxconf))
-    covid19    = covid19bydate[date]
+#--------------------------------------------------------------------------
+#
+# PLOT ON MAP
+#
+#--------------------------------------------------------------------------
+
+for tau in range(p):
+    print(tau)
+
+    val4county = X[tau]
+    # print(beta.min(), beta.max())
+    colorscale = branca.colormap.linear.YlOrRd_09.scale(
+        np.log(1e-1), np.log(val4county.max()))
 
     def style_function(feature):
         county = str(int(feature['id'][-5:]))
         try:
-            data = covid19.at[county, "confirmed"]
-            data = np.log(1e-1) if data <= 0. else np.log(data)
+            # data = covid19.at[county, "confirmed"]
+            data = np.log(val4county[I.index(county)])
+            # data = np.log(1e-1) if data <= 0. else np.log(data)
         except Exception as e:
             data = np.log(1e-1)
         return {
@@ -42,7 +70,7 @@ for date in days:
         style_function=style_function
     ).add_to(m)
 
-    m.save("result_confirmed/covid19-confirmed-%s.html" % date)
+    m.save("%s-%s.html" % (filename, tau))
 
 # driver = selenium.webdriver.PhantomJS()
 # driver.set_window_size(4000, 3000)  # choose a resolution
