@@ -20,7 +20,7 @@ Yp = np.load("/Users/woodie/Desktop/processed_data/death.npy")
 
 #--------------------------------------------------------------------------
 #
-# META DATA
+# META DATA AND CONFIGURATIONS
 #
 #--------------------------------------------------------------------------
 
@@ -50,7 +50,7 @@ print("[%s] start preparing data..." % arrow.now())
 #   shape: [ n_weeks x n_counties ]
 y = X[p:, :].reshape(-1)
 # - explanatory variables
-#   shape: [ n_weeks x n_counties,  ]
+#   shape: [ n_weeks x n_counties, p x n_counties x n_counties ]
 rows, cols, data = [], [], []
 for t in T:
     for i in I:
@@ -75,10 +75,6 @@ print("[%s] start fitting model..." % arrow.now())
 regr = ElasticNet(random_state=0, positive=True, alpha=1., l1_ratio=0.5)
 regr.fit(x, y)
 
-np.save("coef.npy", regr.coef_)
-
 beta = np.load("coef.npy")
-print(x.shape, y.shape)
-print(beta.shape)
-
 beta = beta.reshape(p, n_counties, n_counties)
+np.save("coef.npy", regr.coef_)
