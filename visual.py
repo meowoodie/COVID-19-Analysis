@@ -20,14 +20,18 @@ from preproc import uscountygeo
 p = 18
 # - list of all counties
 #   shape: [ n_counties ]
-I = np.load("/Users/woodie/Desktop/processed_data/counties.npy").tolist()
-# - coefficient 
-#   shape: [ p, n_counties, n_counties ]
-X = np.load("/Users/woodie/Desktop/processed_data/conf_cases.npy")
+I         = np.load("/Users/woodie/Desktop/processed_data/counties.npy").tolist()
+
 # beta      = np.load("ridge-beta.npy")
 # newyorkid = I.index("53033")
 # X         = beta[:, newyorkid, :]
-# - file name
+# X         = X - X.min()
+# filename  = "covid19-nyc-beta-week"
+
+X        = np.load("/Users/woodie/Desktop/processed_data/conf_cases.npy")
+X[1:, :] = X[1:, :] - X[:-1, :]
+print((X < 0).sum())
+X[X < 0] = 0
 filename = "covid19-confirmed-week"
 
 #--------------------------------------------------------------------------

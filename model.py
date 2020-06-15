@@ -65,7 +65,6 @@ for t in T:
             for _, _ in enumerate(taus) for _ in jis ]
         cols += [ taui * n_counties * n_counties + ii * n_counties + ji    
             for taui, _ in enumerate(taus) for ji in jis ]
-        # print(jis)
         data += [ X[tau, ji]            
             for tau in taus for ji in jis ]
 
@@ -80,7 +79,7 @@ scaler.fit(x)
 x      = scaler.transform(x)
 
 # ridge regression
-regr = Ridge(alpha=.1)
+regr = Ridge(alpha=.0)
 regr.fit(x, y)
 beta = regr.coef_
 
