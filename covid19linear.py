@@ -81,9 +81,9 @@ class COVID19linear(nn.Module):
 		# covidLoss = sum([0.85 ** (self.T - i) * self.l2loss(c[1 + i], c_hat[i], inv) for i in range(self.T - 1)])
 
 		# Calculate the l1 norm
-		l1_norm = torch.norm(self.B_nonzero, p=1) + torch.norm(self.A_nonzero, p=1) + torch.norm(self.H_nonzero, p=1)
+		l1_norm = torch.norm(torch.stack(self.B_nonzero, 1), p=1) + torch.norm(torch.stack(self.A_nonzero, 1), p=1) + torch.norm(torch.stack(self.H_nonzero, 1), p=1)
 		# Calculate the l2 norm
-		l2_norm = torch.norm(self.B_nonzero, p=2) + torch.norm(self.A_nonzero, p=2) + torch.norm(self.H_nonzero, p=2)
+		l2_norm = torch.norm(torch.stack(self.B_nonzero, 1), p=2) + torch.norm(torch.stack(self.A_nonzero, 1), p=2) + torch.norm(torch.stack(self.H_nonzero, 1), p=2)
 		print("obj", (0.9 * D_loss + 0.1 * C_loss) / (T * n_counties), "l1 norm", l1_norm, "l2 norm", l2_norm)
 		return (0.9 * D_loss + 0.1 * C_loss) / (T * n_counties) + 1e3 * l1_norm + 1e6 * l2_norm
 
