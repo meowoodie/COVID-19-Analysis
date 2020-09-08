@@ -3,12 +3,14 @@
 
 import time
 import json
+import torch
 import folium
 import branca
 import numpy as np
 # import pandas as pd
 # import selenium.webdriver
 from preproc import uscountygeo
+from covid19linear import COVID19linear
 
 #--------------------------------------------------------------------------
 #
@@ -17,22 +19,36 @@ from preproc import uscountygeo
 #--------------------------------------------------------------------------
 
 # - Number of lags
-p = 18
+p = 2
 # - list of all counties
 #   shape: [ n_counties ]
 hubID     = ["36005", "6075", "13121", "53033", "12086", "17031", "6037", "48201", "48113", "11001"]
 hubNames  = ["NYC", "SF", "ATL", "SEA", "MIA", "CHI", "LA", "HST", "DAL", "DC"]
 I         = np.load("/Users/woodie/Dropbox (GaTech)/workspace/COVID-19-Analysis/predictions/processed_data/counties.npy").tolist()
 
+# Distance matrix for counties
+distance = np.sqrt(np.load("mat/distance.npy")) # [ 3144, 3144 ]
+adj      = np.load("mat/adjacency_matrix.npy")  # [ 3144, 3144 ]
+
+n_counties   = 3144
+n_mobility   = 6
+n_covariates = 2
+
+# Coefficients
+model = COVID19linear(
+    p=p, adj=adj, dist=distance,
+    n_counties=n_counties, n_mobility=n_mobility, n_covariates=n_covariates)
+model.load_state_dict(torch.load("fitted_model/model.pt"))
+X     = model.A.detach().numpy()
+print(X.shape)
+
 for _fips, _name in zip(hubID, hubNames):
     print(_name)
     _id   = I.index(_fips)
-    X     = np.load("/Users/woodie/Dropbox (GaTech)/workspace/COVID-19-Analysis/coef/H.npy", allow_pickle=True)
-    X0    = X[0] # lag 1
-    # X1    = X[1] # lag 2
-    coef0 = X0[:, _id].toarray().flatten() # coef at lag 1
-    # coef1 = X0[:, _id].toarray().flatten() # coef at lag 2
-    filename = "H-coef-%s-lag0" % _name
+    # X     = np.load("/Users/woodie/Dropbox (GaTech)/workspace/COVID-19-Analysis/coef/H.npy", allow_pickle=True)
+    # X0    = X[0] # lag 1
+    coef0 = X[:, _id] # coef at lag 1
+    filename = "B-coef-%s" % _name
 
     #--------------------------------------------------------------------------
     #

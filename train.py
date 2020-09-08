@@ -44,7 +44,6 @@ adj      = np.load("mat/adjacency_matrix.npy")  # [ 3144, 3144 ]
 p = 2
 # other configurations
 I = np.load("mat/counties.npy").tolist()
-n_counties = len(I)
 
 #---------------------------------------------------------------
 #
@@ -54,7 +53,7 @@ n_counties = len(I)
 
 # TODO: Uncomment this line when new mobility data is updated.
 
-# M   = (M - M.min()) / (M.max() - M.min())
+M   = (M - M.min()) / (M.max() - M.min())
 cov = (cov - cov.min()) / (cov.max() - cov.min())
 
 #--------------------------------------------------------------------------
@@ -71,7 +70,7 @@ model = COVID19linear(
     n_counties=n_counties, n_mobility=n_mobility, n_covariates=n_covariates)
 
 # Use Adam optimizer for optimization with exponential learning rate
-optimizer = optim.Adam(model.parameters(), lr=1e+3)
+optimizer = optim.Adam(model.parameters(), lr=2e+3)
 decayRate = 0.9995
 my_lr_scheduler = torch.optim.lr_scheduler.ExponentialLR(optimizer=optimizer, gamma=decayRate)
 
@@ -86,4 +85,4 @@ for i in range(150):
     my_lr_scheduler.step()
     if i % 10 == 0:
         print("iter: %d\tloss: %.5e" % (i, loss.item()))
-        torch.save(model.state_dict(), "fitted_model/model.pt")
+        torch.save(model.state_dict(), "fitted_model/new-model.pt")
