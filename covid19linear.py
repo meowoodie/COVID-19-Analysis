@@ -74,8 +74,11 @@ class COVID19linear(nn.Module):
 		T, n_counties = C.shape
 		inv           = torch.inverse(self.Sigma)
 		# Add up the loss for each week with exponentially decreasing weights
-		D_loss = sum([ 0.85 ** self.l2loss(D[i], D_hat[i], inv) for i in range(T) ])
-		C_loss = sum([ 0.85 ** self.l2loss(C[i], C_hat[i], inv) for i in range(T) ])
+		D_loss = torch.stack([ 0.85 ** (T - i) * self.l2loss(D[i], D_hat[i], inv) for i in range(T) ]).sum()
+		C_loss = torch.stack([ 0.85 ** (T - i) * self.l2loss(C[i], C_hat[i], inv) for i in range(T) ]).sum()
+
+		# deathLoss = sum([0.85 ** (self.T - i) * self.l2loss(d[1 + i], d_hat[i], inv) for i in range(self.T - 1)])
+		# covidLoss = sum([0.85 ** (self.T - i) * self.l2loss(c[1 + i], c_hat[i], inv) for i in range(self.T - 1)])
 
 		# Calculate the l1 norm
 		l1_norm = torch.norm(torch.stack(self.B, 1), p=1) + torch.norm(torch.stack(self.A, 1), p=1) + torch.norm(torch.stack(self.H, 1), p=1)
