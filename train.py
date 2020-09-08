@@ -63,6 +63,8 @@ cov = (cov - cov.min()) / (cov.max() - cov.min())
 #
 #--------------------------------------------------------------------------
 
+torch.manual_seed(0)
+
 print("[%s] start fitting model..." % arrow.now())
 model = COVID19linear(
     p=p, adj=adj, dist=distance,
