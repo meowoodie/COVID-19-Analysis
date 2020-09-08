@@ -32,25 +32,28 @@ class COVID19linear(nn.Module):
 
 		# non-zero entries of matrices Lambda (spatio-temporal dependences)
 		n_nonzero       = len(np.where(adj == 1)[0])
-		self.B_nonzero  = [ torch.nn.Parameter(torch.randn((n_nonzero), requires_grad=True)) for tau in range(p) ]
-		self.A_nonzero  = [ torch.nn.Parameter(torch.randn((n_nonzero), requires_grad=True)) for tau in range(p) ]
-		self.H_nonzero  = [ torch.nn.Parameter(torch.randn((n_nonzero), requires_grad=True)) for tau in range(p) ]
+		self.B_nonzero  = nn.ParameterList([])
+		self.A_nonzero  = nn.ParameterList([])
+		self.H_nonzero  = nn.ParameterList([])
+		for tau in range(self.p):
+			self.B_nonzero.append(torch.nn.Parameter(torch.randn((n_nonzero), requires_grad=True)))
+			self.A_nonzero.append(torch.nn.Parameter(torch.randn((n_nonzero), requires_grad=True)))
+			self.H_nonzero.append(torch.nn.Parameter(torch.randn((n_nonzero), requires_grad=True)))
 		# matrices Lambda
 		coords          = torch.LongTensor(np.where(adj == 1))
 		self.B          = [ torch.sparse.FloatTensor(coords, self.B_nonzero[tau], torch.Size([n_counties, n_counties])).to_dense() for tau in range(p) ]
 		self.A          = [ torch.sparse.FloatTensor(coords, self.A_nonzero[tau], torch.Size([n_counties, n_counties])).to_dense() for tau in range(p) ]
 		self.H          = [ torch.sparse.FloatTensor(coords, self.H_nonzero[tau], torch.Size([n_counties, n_counties])).to_dense() for tau in range(p) ]
-		# self.B          = torch.sparse.FloatTensor(coords, self.B_nonzero, torch.Size([n_counties, n_counties])).to_dense()
-		# self.A          = torch.sparse.FloatTensor(coords, self.A_nonzero, torch.Size([n_counties, n_counties])).to_dense()
-		# self.H          = torch.sparse.FloatTensor(coords, self.H_nonzero, torch.Size([n_counties, n_counties])).to_dense()
+
 		# community mobility
 		self.mu         = torch.nn.Parameter(torch.randn(n_mobility, self.p), requires_grad=True)
 		self.nu         = torch.nn.Parameter(torch.randn(n_mobility, self.p), requires_grad=True)
 		# demographic census
 		self.upsilon    = torch.nn.Parameter(torch.randn(n_covariates), requires_grad=True)
 		self.zeta       = torch.nn.Parameter(torch.randn(n_covariates), requires_grad=True)
+
 		# exponential decaying factor
-		self.theta      = torch.nn.Parameter(torch.ones(1).float(), requires_grad=True)
+		self.theta      = 1000. # torch.nn.Parameter(torch.ones(1).float(), requires_grad=True)
 		# covariance matrix
 		self.Sigma      = self.theta * torch.exp(-self.theta * self.dist) # [ n_counties, n_counties ]
 
@@ -80,12 +83,16 @@ class COVID19linear(nn.Module):
 		# deathLoss = sum([0.85 ** (self.T - i) * self.l2loss(d[1 + i], d_hat[i], inv) for i in range(self.T - 1)])
 		# covidLoss = sum([0.85 ** (self.T - i) * self.l2loss(c[1 + i], c_hat[i], inv) for i in range(self.T - 1)])
 
+		B_nonzeros = torch.stack([ self.B_nonzero[tau] for tau in range(self.p) ], 1)
+		A_nonzeros = torch.stack([ self.A_nonzero[tau] for tau in range(self.p) ], 1)
+		H_nonzeros = torch.stack([ self.H_nonzero[tau] for tau in range(self.p) ], 1)
 		# Calculate the l1 norm
-		l1_norm = torch.norm(torch.stack(self.B_nonzero, 1), p=1) + torch.norm(torch.stack(self.A_nonzero, 1), p=1) + torch.norm(torch.stack(self.H_nonzero, 1), p=1)
+		l1_norm = torch.norm(B_nonzeros, p=1) + torch.norm(A_nonzeros, p=1) + torch.norm(H_nonzeros, p=1)
 		# Calculate the l2 norm
-		l2_norm = torch.norm(torch.stack(self.B_nonzero, 1), p=2) + torch.norm(torch.stack(self.A_nonzero, 1), p=2) + torch.norm(torch.stack(self.H_nonzero, 1), p=2)
+		l2_norm = torch.norm(B_nonzeros, p=2) + torch.norm(A_nonzeros, p=2) + torch.norm(H_nonzeros, p=2)
 		print("obj", (0.9 * D_loss + 0.1 * C_loss) / (T * n_counties), "l1 norm", l1_norm, "l2 norm", l2_norm)
-		return (0.9 * D_loss + 0.1 * C_loss) / (T * n_counties) + 1e3 * l1_norm + 1e6 * l2_norm
+		print(self.B_nonzero[0])
+		return (0.9 * D_loss + 0.1 * C_loss) / (T * n_counties) + 1e1 * l1_norm + 1e2 * l2_norm
 
 	def l2loss(self, y, yhat, sigmaInv):
 		'''
@@ -136,17 +143,15 @@ class COVID19linear(nn.Module):
 		dt = D[t-self.p:t, :].clone()    # [ p, n_counties ]
 		mt = M[:, t-self.p:t, :].clone() # [ n_mobility, p, n_counties ]
 
-		mu = self.mu.unsqueeze(-1).repeat(1, 1, n_counties) 
-		nu = self.nu.unsqueeze(-1).repeat(1, 1, n_counties)
-
 		c2c = torch.stack([ torch.matmul(ct[tau].clone(), self.B[tau]) for tau in range(self.p) ], dim=1).sum(1)
 		c2d = torch.stack([ torch.matmul(ct[tau].clone(), self.H[tau]) for tau in range(self.p) ], dim=1).sum(1)
 		d2d = torch.stack([ torch.matmul(dt[tau].clone(), self.A[tau]) for tau in range(self.p) ], dim=1).sum(1)
 
+		mu = self.mu.unsqueeze(-1).repeat(1, 1, n_counties) 
+		nu = self.nu.unsqueeze(-1).repeat(1, 1, n_counties)
+		
 		# Make predictions
 		c_hat = c2c + (mt * mu).sum(0).sum(0) + torch.matmul(self.upsilon, cov)    # [ n_counties ]
 		d_hat = c2d + d2d + (mt * nu).sum(0).sum(0) + torch.matmul(self.zeta, cov) # [ n_counties ]
-		# c_hat = torch.matmul(ct, self.B).sum(0) + (mt * mu).sum(0).sum(0) + torch.matmul(self.upsilon, cov)                                # [ n_counties ]
-		# d_hat = torch.matmul(ct, self.H).sum(0) + torch.matmul(dt, self.A).sum(0) + (mt * nu).sum(0).sum(0) + torch.matmul(self.zeta, cov) # [ n_counties ]
 
 		return c_hat, d_hat # [ n_counties ]
