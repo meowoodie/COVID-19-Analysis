@@ -3,7 +3,7 @@ import torch
 import torch.optim as optim
 import numpy as np
 from sklearn.preprocessing import StandardScaler
-from covid19linear import COVID19linear
+from covid19linear import COVID19linear, NonNegativeClipper
 
 
 #--------------------------------------------------------------------------
@@ -70,20 +70,22 @@ model = COVID19linear(
     n_counties=n_counties, n_mobility=n_mobility, n_covariates=n_covariates)
 
 # Use Adam optimizer for optimization with exponential learning rate
-optimizer = optim.Adam(model.parameters(), lr=1e+3)
-decayRate = 0.9995
-my_lr_scheduler = torch.optim.lr_scheduler.ExponentialLR(optimizer=optimizer, gamma=decayRate)
+optimizer = optim.Adam(model.parameters(), lr=1e2)
+# decayRate = 0.9999
+# my_lr_scheduler = torch.optim.lr_scheduler.ExponentialLR(optimizer=optimizer, gamma=decayRate)
 
 # Complete training
-for i in range(150):
+for i in range(5000):
+    # clipper = NonNegativeClipper()
     model.train()
     optimizer.zero_grad()
     C_hat, D_hat = model(C=C, D=D, M=M, cov=cov) # [ T - p, n_counties ], [ T - p, n_counties ]
     loss         = model.loss(C=C[p+1:], D=D[p+1:], C_hat=C_hat[:-1], D_hat=D_hat[:-1])
     loss.backward(retain_graph=True)
     optimizer.step()
-    my_lr_scheduler.step()
-    if i % 10 == 0:
-        print(model.theta)
+    # model.apply(clipper)
+    # my_lr_scheduler.step()
+    if i % 5 == 0:
+        print(model.B_nonzero[0])
         print("iter: %d\tloss: %.5e" % (i, loss.item()))
         torch.save(model.state_dict(), "fitted_model/new-model.pt")

@@ -5,6 +5,28 @@ import torch.optim as optim
 from torch.autograd import Variable
 import arrow
 
+class NonNegativeClipper(object):
+	def __init__(self):
+		pass
+
+	def __call__(self, module):
+		"""enforce non-negative constraints"""
+		if hasattr(module, 'B_nonzero'):
+			B0 = module.B_nonzero[0].data
+			B1 = module.B_nonzero[1].data
+			module.B_nonzero[0].data = torch.clamp(B0, min=0.)
+			module.B_nonzero[1].data = torch.clamp(B1, min=0.)
+		if hasattr(module, 'A_nonzero'):
+			A0 = module.A_nonzero[0].data
+			A1 = module.A_nonzero[1].data
+			module.A_nonzero[0].data = torch.clamp(A0, min=0.)
+			module.A_nonzero[1].data = torch.clamp(A1, min=0.)
+		if hasattr(module, 'H_nonzero'):
+			H0 = module.H_nonzero[0].data
+			H1 = module.H_nonzero[1].data
+			module.H_nonzero[0].data = torch.clamp(H0, min=0.)
+			module.H_nonzero[1].data = torch.clamp(H1, min=0.)
+
 class COVID19linear(nn.Module):
 	'''
 	Class to learn the parameters in a state space model
@@ -25,6 +47,8 @@ class COVID19linear(nn.Module):
 		'''
 		super().__init__()
 
+		self.l1ratio    = 1e1
+		self.l2ratio    = 1e3
 		self.p          = p # number of lags
 		self.n_counties = n_counties
 		self.n_mobility = n_mobility
@@ -77,11 +101,11 @@ class COVID19linear(nn.Module):
 		T, n_counties = C.shape
 		inv           = torch.inverse(self.Sigma)
 		# Add up the loss for each week with exponentially decreasing weights
+		# D_loss = torch.stack([ self.l2loss(D[i], D_hat[i], inv) for i in range(T) ]).sum()
+		# C_loss = torch.stack([ self.l2loss(C[i], C_hat[i], inv) for i in range(T) ]).sum()
+
 		D_loss = torch.stack([ 0.85 ** (T - i) * self.l2loss(D[i], D_hat[i], inv) for i in range(T) ]).sum()
 		C_loss = torch.stack([ 0.85 ** (T - i) * self.l2loss(C[i], C_hat[i], inv) for i in range(T) ]).sum()
-
-		# deathLoss = sum([0.85 ** (self.T - i) * self.l2loss(d[1 + i], d_hat[i], inv) for i in range(self.T - 1)])
-		# covidLoss = sum([0.85 ** (self.T - i) * self.l2loss(c[1 + i], c_hat[i], inv) for i in range(self.T - 1)])
 
 		B_nonzeros = torch.stack([ self.B_nonzero[tau] for tau in range(self.p) ], 1)
 		A_nonzeros = torch.stack([ self.A_nonzero[tau] for tau in range(self.p) ], 1)
@@ -90,9 +114,9 @@ class COVID19linear(nn.Module):
 		l1_norm = torch.norm(B_nonzeros, p=1) + torch.norm(A_nonzeros, p=1) + torch.norm(H_nonzeros, p=1)
 		# Calculate the l2 norm
 		l2_norm = torch.norm(B_nonzeros, p=2) + torch.norm(A_nonzeros, p=2) + torch.norm(H_nonzeros, p=2)
-		print("obj", (0.9 * D_loss + 0.1 * C_loss) / (T * n_counties), "l1 norm", l1_norm, "l2 norm", l2_norm)
-		print(self.B_nonzero[0])
-		return (0.9 * D_loss + 0.1 * C_loss) / (T * n_counties) + 1e1 * l1_norm + 1e2 * l2_norm
+		print("obj: %.5e\tl1 norm: %.5e\tl2 norm: %.5e." % ((0.9 * D_loss + 0.1 * C_loss) / (T * n_counties), self.l1ratio * l1_norm, self.l2ratio * l2_norm))
+		# print(self.B_nonzero[0])
+		return (0.9 * D_loss + 0.1 * C_loss) / (T * n_counties) + self.l1ratio * l1_norm + self.l2ratio * l2_norm
 
 	def l2loss(self, y, yhat, sigmaInv):
 		'''

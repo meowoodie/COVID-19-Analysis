@@ -11,6 +11,7 @@ import numpy as np
 # import selenium.webdriver
 from preproc import uscountygeo
 from covid19linear import COVID19linear
+from scipy.sparse import csr_matrix
 
 #--------------------------------------------------------------------------
 #
@@ -38,9 +39,12 @@ n_covariates = 2
 model = COVID19linear(
     p=p, adj=adj, dist=distance,
     n_counties=n_counties, n_mobility=n_mobility, n_covariates=n_covariates)
-model.load_state_dict(torch.load("fitted_model/model.pt"))
-X     = model.A.detach().numpy()
-print(X.shape)
+# model.load_state_dict(torch.load("fitted_model/new-model-5e-1-nolog-1e38norm-clipper.pt"))
+model.load_state_dict(torch.load("fitted_model/new-model-5e2.pt"))
+val   = model.A_nonzero[0].detach().numpy()
+x, y  = np.where(adj == 1)
+X     = csr_matrix((val, (x, y)), shape=(n_counties, n_counties)).toarray()
+print(X)
 
 for _fips, _name in zip(hubID, hubNames):
     print(_name)
