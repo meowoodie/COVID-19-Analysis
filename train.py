@@ -48,22 +48,14 @@ n_counties = len(I)
 
 #---------------------------------------------------------------
 #
-# Preprocess the data by applying standardization to covariates
+# Data normalization
 #
 #---------------------------------------------------------------
 
-# mobility = mobility[p:]
+# TODO: Uncomment this line when new mobility data is updated.
 
-# mobScaler = StandardScaler()
-# covScaler = StandardScaler()
-
-# mobScaler.fit(mobility.reshape((n_weeks, n_counties * 6)))
-# covScaler.fit(cov)
-
-# mobility = mobScaler.transform(mobility.reshape((n_weeks, n_counties * 6)))
-# mobility = mobility.reshape((n_weeks, n_counties, 6))
-# M        = mobility
-# cov      = covScaler.transform(cov)
+# M   = (M - M.min()) / (M.max() - M.min())
+cov = (cov - cov.min()) / (cov.max() - cov.min())
 
 #--------------------------------------------------------------------------
 #
@@ -77,7 +69,7 @@ model = COVID19linear(
     n_counties=n_counties, n_mobility=n_mobility, n_covariates=n_covariates)
 
 # Use Adam optimizer for optimization with exponential learning rate
-optimizer = optim.Adam(model.parameters(), lr = 9e-1)
+optimizer = optim.Adam(model.parameters(), lr=1e-2)
 decayRate = 0.9995
 my_lr_scheduler = torch.optim.lr_scheduler.ExponentialLR(optimizer=optimizer, gamma=decayRate)
 

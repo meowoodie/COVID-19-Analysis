@@ -64,6 +64,10 @@ class COVID19linear(nn.Module):
 		Returns:
 		The regularized l2 loss
 		'''
+		# take log for poisson regression
+		C = torch.log(C + 1e-2)
+		D = torch.log(D + 1e-2)
+
 		T, n_counties = C.shape
 		inv           = torch.inverse(self.Sigma)
 		# Add up the loss for each week with exponentially decreasing weights
