@@ -79,7 +79,7 @@ scaler.fit(x)
 x      = scaler.transform(x)
 
 # ridge regression
-regr = Ridge(alpha=.0)
+regr = ElasticNet(random_state=0, positive=True, alpha=0.1, l1_ratio=0.2, max_iter=10000)
 regr.fit(x, y)
 beta = regr.coef_
 
