@@ -44,68 +44,85 @@ model.load_state_dict(torch.load("fitted_model/new-model-5e2.pt"))
 val   = model.A_nonzero[0].detach().numpy()
 x, y  = np.where(adj == 1)
 X     = csr_matrix((val, (x, y)), shape=(n_counties, n_counties)).toarray()
-print(X)
 
-for _fips, _name in zip(hubID, hubNames):
-    print(_name)
-    _id   = I.index(_fips)
-    # X     = np.load("/Users/woodie/Dropbox (GaTech)/workspace/COVID-19-Analysis/coef/H.npy", allow_pickle=True)
-    # X0    = X[0] # lag 1
-    coef0 = X[:, _id] # coef at lag 1
-    filename = "B-coef-%s" % _name
+print(model.mu.detach().numpy())
+print(model.nu.detach().numpy())
+print(model.upsilon.detach().numpy())
+print(model.zeta.detach().numpy())
 
-    #--------------------------------------------------------------------------
-    #
-    # PLOT ON MAP
-    #
-    #--------------------------------------------------------------------------
+# import matplotlib.pyplot as plt
+# xshow = X.flatten()[np.where(X.flatten() > 0)[0]]
+# plt.hist(np.exp(xshow / 10000), bins=20)
+# plt.show()
 
-    val4county = coef0
+# xshow = X.flatten()[np.where(X.flatten() < 0)[0]]
+# plt.hist(np.exp(- xshow / 10000), bins=20)
+# plt.show()
 
-    # take log
-    # negcoefids = np.where(val4county <= 0)[0]
-    # poscoefids = np.where(val4county > 0)[0]
-    # val4county[poscoefids] = np.log(val4county[poscoefids])
-    # val4county[negcoefids] = - np.log(- val4county[negcoefids] + 1e-10)
+# for _fips, _name in zip(hubID, hubNames):
+#     print(_name)
+#     _id   = I.index(_fips)
+#     # X     = np.load("/Users/woodie/Dropbox (GaTech)/workspace/COVID-19-Analysis/coef/H.npy", allow_pickle=True)
+#     # X0    = X[0] # lag 1
+#     coef0 = X[:, _id] # coef at lag 1
+#     filename = "A-coef0-%s" % _name
 
-    print(val4county.min(), val4county.max())
-    absmax     = max(abs(val4county.min()), abs(val4county.max()))
-    colorscale = branca.colormap.LinearColormap(
-        ['red', 'white', 'blue'],
-        vmin=-absmax, vmax=absmax,
-        caption='Coefficients') # Caption for Color scale or Legend
+#     #--------------------------------------------------------------------------
+#     #
+#     # PLOT ON MAP
+#     #
+#     #--------------------------------------------------------------------------
 
-    def style_function(feature):
-        county = str(int(feature['id'][-5:]))
-        try:
-            data = val4county[I.index(county)]
-        except Exception as e:
-            data = 0
-        return {
-            'fillOpacity': 0.5,
-            'weight': 0,
-            'fillColor': '#black' if data is None else colorscale(data)
-        }
+#     val4county = coef0
 
-    m = folium.Map(
-        location=[38, -95],
-        tiles='cartodbpositron',
-        zoom_start=5
-    )
+#     # take exp
+#     negcoefids = np.where(val4county <= 0)[0]
+#     poscoefids = np.where(val4county > 0)[0]
+#     val4county[poscoefids] = np.exp(val4county[poscoefids] / 10000) 
+#     val4county[negcoefids] = - np.exp(- val4county[negcoefids] / 10000)
 
-    folium.TopoJson(
-        uscountygeo,
-        'objects.us_counties_20m',
-        style_function=style_function
-    ).add_to(m)
+#     print(val4county.min(), val4county.max())
+#     # absmax     = max(abs(val4county.min()), abs(val4county.max()))
+#     absmax     = 200000
+#     colorscale = branca.colormap.LinearColormap(
+#         ['red', 'white', 'blue'],
+#         vmin=-absmax, vmax=absmax,
+#         caption='Coefficients') # Caption for Color scale or Legend
 
-    colorscale.add_to(m)
+#     def style_function(feature):
+#         county = str(int(feature['id'][-5:]))
+#         try:
+#             data = val4county[I.index(county)]
+#         except Exception as e:
+#             data = 0
+#         return {
+#             'fillOpacity': 0.5,
+#             'color': 'black',
+#             'weight': .1,
+#             'fillColor': '#black' if data is None else colorscale(data)
+#         }
 
-    m.save("%s.html" % filename)
+#     m = folium.Map(
+#         location=[38, -95],
+#         tiles='cartodbpositron',
+#         zoom_start=4,
+#         zoom_control=False,
+#         scrollWheelZoom=False
+#     )
 
-# folium documentation
-# https://python-visualization.github.io/folium/quickstart.html
-# export html to png
-# https://github.com/python-visualization/folium/issues/833
-# phantomjs installation
-# https://stackoverflow.com/questions/36993962/installing-phantomjs-on-mac
+#     folium.TopoJson(
+#         uscountygeo,
+#         'objects.us_counties_20m',
+#         style_function=style_function
+#     ).add_to(m)
+
+#     colorscale.add_to(m)
+
+#     m.save("%s.html" % filename)
+
+# # folium documentation
+# # https://python-visualization.github.io/folium/quickstart.html
+# # export html to png
+# # https://github.com/python-visualization/folium/issues/833
+# # phantomjs installation
+# # https://stackoverflow.com/questions/36993962/installing-phantomjs-on-mac
