@@ -11,22 +11,24 @@ def error(real_data, pred_data, states, counties, c2s):
         county_ind      = np.where(is_county_belong_to)[0]
         real            = real_data[county_ind]
         pred            = pred_data[county_ind]
-        error           = ((real - pred) ** 2).mean(0)
+        error           = (abs(real - pred)).mean(0)
         error_mat[i, :] = error
 
-    sw_real_confirm = merge_counties_by_states(real_data, states[:-2], counties, c2s[:-2]) # [ 50, nweeks ]
-    sw_pred_confirm = merge_counties_by_states(pred_data, states[:-2], counties, c2s[:-2]) # [ 50, nweeks ]
-    error_state = (abs(sw_real_confirm - sw_pred_confirm)).mean(1)
-    error_week  = (abs(sw_real_confirm - sw_pred_confirm)).mean(0)
+    state_real_confirm = merge_counties_by_states(real_data, states[:-2], counties, c2s[:-2]) # [ 50, nweeks ]
+    state_pred_confirm = merge_counties_by_states(pred_data, states[:-2], counties, c2s[:-2]) # [ 50, nweeks ]
+    error_state = (abs(state_real_confirm - state_pred_confirm)).mean(1)
+    error_week  = (abs(state_real_confirm - state_pred_confirm)).mean(0)
     
     return error_mat, error_state, error_week
 
-def error_heatmap(real_data, pred_data, states, counties, c2s, dates, nweeks=22, modelname="One-week ahead"):
+def error_heatmap(real_data, recv_data, states, counties, c2s, dates, nweeks, modelname, pred_data=None):
 
     dates = dates[:nweeks]
 
-    error_mat, error_state, error_week    = error(real_data[:, :nweeks], pred_data[:, :nweeks], states, counties, c2s)
-    error_mat0, error_state0, error_week0 = error(real_data[:, 1:nweeks+1], real_data[:, :nweeks], states, counties, c2s)
+    error_mat, error_state, error_week    = error(real_data[:, :nweeks], recv_data[:, :nweeks], states, counties, c2s)
+    if pred_data is not None:
+        error_mat0, error_state0, error_week0 = error(real_data[:, :nweeks], pred_data[:, :nweeks], states, counties, c2s)
+    error_mat1, error_state1, error_week1 = error(real_data[:, :nweeks-1], real_data[:, 1:nweeks], states, counties, c2s)
     print(error_mat.shape)
     print(len(dates))
 
@@ -34,10 +36,14 @@ def error_heatmap(real_data, pred_data, states, counties, c2s, dates, nweeks=22,
     # states       = states[states_order]
     states       = [ states[ind] for ind in states_order ]
     error_mat    = error_mat[states_order, :]
-    error_mat0   = error_mat0[states_order, :]
+    if pred_data is not None:
+        error_mat0   = error_mat0[states_order, :]
+    error_mat1   = error_mat1[states_order, :]
     rev_states_order = np.flip(states_order)
     error_state  = error_state[rev_states_order]
-    error_state0 = error_state0[rev_states_order]
+    if pred_data is not None:
+        error_state0 = error_state0[rev_states_order]
+    error_state1 = error_state1[rev_states_order]
 
     plt.rc('text', usetex=True)
     font = {
@@ -78,26 +84,30 @@ def error_heatmap(real_data, pred_data, states, counties, c2s, dates, nweeks=22,
         ax_imshow.set_xticklabels(dates, rotation=90)
 
         # the error vector for states and weeks
-        ax_state.plot(np.log(error_state + 1e-5), np.arange(50), c="red", linewidth=2, linestyle="-", label="%s" % modelname, alpha=.8)
-        ax_state.plot(np.log(error_state0 + 1e-5), np.arange(50), c="grey", linewidth=1.5, linestyle="--", label="Persistence", alpha=.5)
-        ax_week.plot(np.log(error_week + 1e-5), c="red", linewidth=2, linestyle="-", label="%s" % modelname, alpha=.8)
-        ax_week.plot(np.log(error_week0 + 1e-5), c="grey", linewidth=1.5, linestyle="--", label="Persistence", alpha=.5)
+        ax_state.plot(np.log(error_state + 1e-5), np.arange(50), c="red", linewidth=2, linestyle="-", label="In-sample fitted", alpha=.5)
+        if pred_data is not None:
+            ax_state.plot(np.log(error_state0 + 1e-5), np.arange(50), c="blue", linewidth=2, linestyle="-", label="One-week ahead prediction", alpha=.5)
+        ax_state.plot(np.log(error_state1 + 1e-5), np.arange(50), c="grey", linewidth=1.5, linestyle="--", label="Persistence", alpha=.5)
+
+        ax_week.plot(np.log(error_week + 1e-5), c="red", linewidth=2, linestyle="-", label="In-sample fitted", alpha=.5)
+        if pred_data is not None:
+            ax_week.plot(np.log(error_week0 + 1e-5), c="blue", linewidth=2, linestyle="-", label="One-week ahead prediction", alpha=.5)
+        ax_week.plot(np.log(error_week1 + 1e-5), c="grey", linewidth=1.5, linestyle="--", label="Persistence", alpha=.5)
 
         ax_state.get_yaxis().set_ticks([])
         ax_state.get_xaxis().set_ticks([])
         ax_state.set_xlabel("MAE")
         ax_state.set_ylim(0, 50)
-        # plt.setp(ax_state.xaxis.get_label(), visible=True, text="MSE")
         ax_week.get_xaxis().set_ticks([])
         ax_week.get_yaxis().set_ticks([])
         ax_week.set_ylabel("MAE")
         ax_week.set_xlim(0, nweeks)
-        # plt.setp(ax_week.yaxis.get_label(), visible=True, text="MSE")
         plt.figtext(0.81, 0.133, '0')
-        plt.figtext(0.91, 0.133, '%.2e' % max(max(error_state), max(error_state0)))
+        plt.figtext(0.91, 0.133, '%.2f' % max(max(error_state), max(error_state1)))
         plt.figtext(0.135, 0.81, '0')
-        plt.figtext(0.085, 0.915, '%.2e' % max(max(error_week), max(error_week0)))
-        plt.legend()
+        # plt.figtext(0.105, 0.915, '%.2f' % max(max(error_week), max(error_week1)))
+        plt.figtext(0.095, 0.915, '%.2f' % max(max(error_week), max(error_week1)))
+        plt.legend(loc="upper right")
 
         cbaxes = fig.add_axes([left_h, height + left + 0.01, .03, .12])
         cbaxes.get_xaxis().set_ticks([])
@@ -110,9 +120,9 @@ def error_heatmap(real_data, pred_data, states, counties, c2s, dates, nweeks=22,
         ])
         cbar.set_ticklabels([
             0, # "%.2e" % error_mat.min(), 
-            "%.2e" % error_mat.max()
+            "%.2f" % error_mat.max()
         ])
-        cbar.ax.set_ylabel('MAE', rotation=270, labelpad=-20)
+        cbar.ax.set_ylabel('MAE', rotation=270, labelpad=-5)
 
         fig.tight_layout()
         # plt.show()
@@ -126,30 +136,29 @@ if __name__ == "__main__":
     c2s          = np.load("predictions/processed_data/state_to_county.npy")
 
     # DATA
-    real_confirm, rcdates = table_loader("predictions/confirmedCases.csv", counties)
-    real_death, rddates   = table_loader("predictions/Deaths.csv", counties)
+    real_death, real_dates = table_loader("predictions/deaths.csv", counties)
+    pred_death, pred_dates = table_loader("predictions/predicted-deaths.csv", counties)
+    recv_death, recv_dates = table_loader("predictions/recovered-deaths.csv", counties)
 
-    pred_confirm_1week, pc1dates = table_loader("predictions/oneWeekCasesPrediction.csv", counties)
-    pred_confirm_2week, pc2dates = table_loader("predictions/twoWeekCasesPrediction.csv", counties)
-    pred_death_1week, pd1dates   = table_loader("predictions/oneWeekDeathPrediction.csv", counties)
-    pred_death_2week, pd2dates   = table_loader("predictions/twoWeekDeathPrediction.csv", counties)
-    pred_death_3week, pd3dates   = table_loader("predictions/threeWeekDeathPrediction.csv", counties)
+    real_death = real_death[:, 11:]
+    recv_death = recv_death[:, 11:]
+    real_dates = real_dates[11:]
 
-    # error_heatmap(real_confirm, pred_confirm_1week, states, counties, c2s, rcdates, nweeks=24, modelname="1-week ahead confirm")
-    # error_heatmap(real_confirm, pred_confirm_2week, states, counties, c2s, rcdates, nweeks=21, modelname="2-weeks ahead confirm")
-    error_heatmap(real_death, pred_death_1week, states, counties, c2s, rcdates, nweeks=24, modelname="1-week ahead death")
-    # error_heatmap(real_death, pred_death_2week, states, counties, c2s, rcdates, nweeks=21, modelname="2-weeks ahead death")
-    # error_heatmap(real_death, pred_death_3week, states, counties, c2s, rcdates, nweeks=20, modelname="3-weeks ahead death")
+    error_heatmap(real_death, recv_death, states, counties, c2s, real_dates, nweeks=len(real_dates)-1, modelname="death-error", pred_data=pred_death)
 
 
-    # cmap = matplotlib.cm.get_cmap('magma')
-    # plt.imshow(np.log(error_mat + 1e-5), cmap=cmap, extent=[0,23,0,50], aspect=.5)
-    # plt.show()
 
-    # plt.plot(np.log(error_state + 1e-5))
-    # plt.plot(np.log(error_state0 + 1e-5))
-    # plt.show()
+    # # META DATA
+    # counties     = np.load("predictions/processed_data/counties.npy").tolist()
+    # states       = np.load("predictions/processed_data/states.npy").tolist()
+    # c2s          = np.load("predictions/processed_data/state_to_county.npy")
 
-    # plt.plot(np.log(error_week + 1e-5))
-    # plt.plot(np.log(error_week0 + 1e-5))
-    # plt.show()
+    # # DATA
+    # real_case, real_dates = table_loader("predictions/cases.csv", counties)
+    # recv_case, recv_dates = table_loader("predictions/recovered-cases.csv", counties)
+
+    # # real_case = real_case[:, 11:]
+    # # recv_case = recv_case[:, 11:]
+    # # real_dates = real_dates[11:]
+
+    # error_heatmap(real_case, recv_case, states, counties, c2s, real_dates, nweeks=len(real_dates)-1, modelname="case-error")
