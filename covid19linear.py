@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
 import numpy as np
 import torch
 import torch.nn as nn
@@ -95,8 +98,8 @@ class COVID19linear(nn.Module):
 		The regularized l2 loss
 		'''
 		# take log for poisson regression
-		C = torch.log(C + 1e-2)
-		D = torch.log(D + 1e-2)
+		# C = torch.log(C + 1e-2)
+		# D = torch.log(D + 1e-2)
 
 		T, n_counties = C.shape
 		inv           = torch.inverse(self.Sigma)
@@ -104,8 +107,8 @@ class COVID19linear(nn.Module):
 		# D_loss = torch.stack([ self.l2loss(D[i], D_hat[i], inv) for i in range(T) ]).sum()
 		# C_loss = torch.stack([ self.l2loss(C[i], C_hat[i], inv) for i in range(T) ]).sum()
 
-		D_loss = torch.stack([ 0.85 ** (T - i) * self.l2loss(D[i], D_hat[i], inv) for i in range(T) ]).sum()
-		C_loss = torch.stack([ 0.85 ** (T - i) * self.l2loss(C[i], C_hat[i], inv) for i in range(T) ]).sum()
+		D_loss = torch.stack([ 0.99 ** (T - i) * self.l2loss(D[i], D_hat[i], inv) for i in range(T) ]).sum()
+		C_loss = torch.stack([ 0.99 ** (T - i) * self.l2loss(C[i], C_hat[i], inv) for i in range(T) ]).sum()
 
 		B_nonzeros = torch.stack([ self.B_nonzero[tau] for tau in range(self.p) ], 1)
 		A_nonzeros = torch.stack([ self.A_nonzero[tau] for tau in range(self.p) ], 1)
@@ -114,9 +117,8 @@ class COVID19linear(nn.Module):
 		l1_norm = torch.norm(B_nonzeros, p=1) + torch.norm(A_nonzeros, p=1) + torch.norm(H_nonzeros, p=1)
 		# Calculate the l2 norm
 		l2_norm = torch.norm(B_nonzeros, p=2) + torch.norm(A_nonzeros, p=2) + torch.norm(H_nonzeros, p=2)
-		print("obj: %.5e\tl1 norm: %.5e\tl2 norm: %.5e." % ((0.9 * D_loss + 0.1 * C_loss) / (T * n_counties), self.l1ratio * l1_norm, self.l2ratio * l2_norm))
-		# print(self.B_nonzero[0])
-		return (0.9 * D_loss + 0.1 * C_loss) / (T * n_counties) + self.l1ratio * l1_norm + self.l2ratio * l2_norm
+		# print("obj: %.5e\tl1 norm: %.5e\tl2 norm: %.5e." % ((0.9 * D_loss + 0.1 * C_loss) / (T * n_counties), self.l1ratio * l1_norm, self.l2ratio * l2_norm))
+		return (0.9 * D_loss + 0.1 * C_loss) / (T * n_counties) # + self.l1ratio * l1_norm + self.l2ratio * l2_norm
 
 	def l2loss(self, y, yhat, sigmaInv):
 		'''

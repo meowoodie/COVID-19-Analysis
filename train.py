@@ -1,7 +1,11 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
 import arrow
 import torch
 import torch.optim as optim
 import numpy as np
+import matplotlib.pyplot as plt
 from sklearn.preprocessing import StandardScaler
 from covid19linear import COVID19linear, NonNegativeClipper
 
@@ -13,16 +17,16 @@ from covid19linear import COVID19linear, NonNegativeClipper
 #--------------------------------------------------------------------------
 
 # confirmed cases and deaths
-C = torch.FloatTensor(np.load("mat/ConfirmedCases.npy")) # [ T, counties ]
-D = torch.FloatTensor(np.load("mat/death.npy"))          # [ T, counties ]
+C = torch.FloatTensor(np.load("mat/ConfirmedCases_1-17.npy")) # [ T, counties ]
+D = torch.FloatTensor(np.load("mat/death_1-17.npy"))          # [ T, counties ]
 print("Case matrix shape", C.shape)
 print("Death matrix shape", D.shape)
 
 # Load covariates
-M      = torch.FloatTensor(np.load("mat/mobility.npy").transpose([2,0,1])) # [ n_mobility, T, counties ]
+M      = torch.FloatTensor(np.load("mat/mobility_1-17.npy").transpose([2,0,1])) # [ n_mobility, T, counties ]
 pop    = np.load("mat/population.npy")
 over60 = np.load("mat/over60.npy")
-cov    = torch.FloatTensor(np.array([pop, over60]))                        # [ n_covariates, T, counties ]
+cov    = torch.FloatTensor(np.array([pop, over60]))                             # [ n_covariates, T, counties ]
 print("Mobility matrix shape", M.shape)
 print("Census matrix shape", cov.shape)
 
@@ -70,12 +74,12 @@ model = COVID19linear(
     n_counties=n_counties, n_mobility=n_mobility, n_covariates=n_covariates)
 
 # Use Adam optimizer for optimization with exponential learning rate
-optimizer = optim.Adam(model.parameters(), lr=1e2)
+optimizer = optim.Adam(model.parameters(), lr=1e+3)
 # decayRate = 0.9999
 # my_lr_scheduler = torch.optim.lr_scheduler.ExponentialLR(optimizer=optimizer, gamma=decayRate)
 
 # Complete training
-for i in range(5000):
+for i in range(200):
     # clipper = NonNegativeClipper()
     model.train()
     optimizer.zero_grad()
@@ -86,6 +90,5 @@ for i in range(5000):
     # model.apply(clipper)
     # my_lr_scheduler.step()
     if i % 5 == 0:
-        print(model.B_nonzero[0])
         print("iter: %d\tloss: %.5e" % (i, loss.item()))
-        torch.save(model.state_dict(), "fitted_model/new-model.pt")
+        torch.save(model.state_dict(), "fitted_model/model-[%s].pt" % arrow.now().date())
