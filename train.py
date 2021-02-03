@@ -56,7 +56,6 @@ I = np.load("mat/counties.npy").tolist()
 #---------------------------------------------------------------
 
 # TODO: Uncomment this line when new mobility data is updated.
-
 M   = (M - M.min()) / (M.max() - M.min())
 cov = (cov - cov.min()) / (cov.max() - cov.min())
 
@@ -78,17 +77,40 @@ optimizer = optim.Adam(model.parameters(), lr=1e+3)
 # decayRate = 0.9999
 # my_lr_scheduler = torch.optim.lr_scheduler.ExponentialLR(optimizer=optimizer, gamma=decayRate)
 
-# Complete training
-for i in range(200):
-    # clipper = NonNegativeClipper()
-    model.train()
-    optimizer.zero_grad()
-    C_hat, D_hat = model(C=C, D=D, M=M, cov=cov) # [ T - p, n_counties ], [ T - p, n_counties ]
-    loss         = model.loss(C=C[p+1:], D=D[p+1:], C_hat=C_hat[:-1], D_hat=D_hat[:-1])
-    loss.backward(retain_graph=True)
-    optimizer.step()
-    # model.apply(clipper)
-    # my_lr_scheduler.step()
-    if i % 5 == 0:
-        print("iter: %d\tloss: %.5e" % (i, loss.item()))
-        torch.save(model.state_dict(), "fitted_model/model-[%s].pt" % arrow.now().date())
+# # Complete training
+# for i in range(5000):
+#     # clipper = NonNegativeClipper()
+#     model.train()
+#     optimizer.zero_grad()
+#     C_hat, D_hat = model(C=C, D=D, M=M, cov=cov) # [ T - p, n_counties ], [ T - p, n_counties ]
+#     loss         = model.loss(C=C[p+1:], D=D[p+1:], C_hat=C_hat[:-1], D_hat=D_hat[:-1])
+#     loss.backward(retain_graph=True)
+#     optimizer.step()
+#     # model.apply(clipper)
+#     # my_lr_scheduler.step()
+#     if i % 5 == 0:
+#         print("iter: %d\tloss: %.5e" % (i, loss.item()))
+#         torch.save(model.state_dict(), "fitted_model/model-[%s].pt" % arrow.now().date())
+#         # in-sample prediction
+#         model.eval()
+#         C_hat, D_hat = model(C=C, D=D, M=M, cov=cov)
+#         C_hat = torch.stack(C_hat, dim=0).detach().numpy()
+#         D_hat = torch.stack(D_hat, dim=0).detach().numpy()
+#         np.save("predictions/in-sample-cases.npy", C_hat)
+#         np.save("predictions/in-sample-deaths.npy", D_hat)
+
+# # Evaluation
+# model.load_state_dict(torch.load("fitted_model/model-[2021-01-28].pt"))
+# model.eval()
+# C_hat, D_hat = model(C=C, D=D, M=M, cov=cov)
+# C_hat = torch.stack(C_hat, dim=0).detach().numpy()
+# D_hat = torch.stack(D_hat, dim=0).detach().numpy()
+
+# C_hat = np.load("predictions/in-sample-cases.npy")
+# D_hat = np.load("predictions/in-sample-deaths.npy")
+# print(D.shape)
+# print(D_hat.shape)
+
+# plt.plot(D[2:,:].sum(1), c="blue")
+# plt.plot(D_hat.sum(1), c="red")
+# plt.show()
