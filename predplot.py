@@ -4,7 +4,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
-from covid19linear import COVID19linear
 from utils import table_loader, merge_counties_by_states, statewise_baselines_loader
 
 def case_state_linechart(statename, data, dates):
