@@ -27,8 +27,8 @@ def est_error_heatmap(data, states, counties, c2s, dates, nweeks, modelname):
 
     real_data      = data[0]
     est_data       = data[1]
-    est_data_nomob = data[2]
-    est_data_nocov = data[3]
+    est_data_nocov = data[2]
+    est_data_nomob = data[3]
 
     error_mat, error_state, error_week    = error(real_data[-nweeks:, :], est_data[-nweeks-1:-1, :], states, counties, c2s)
     error_mat1, error_state1, error_week1 = error(real_data[-nweeks:, :], est_data_nomob[-nweeks-1:-1, :], states, counties, c2s)
@@ -155,7 +155,7 @@ def pred_error_heatmap(data, states, counties, c2s, dates, nweeks, modelname):
     mobs_data = data[4]
     ihme_data = data[5]
 
-    error_mat, error_state, error_week = error(real_data[-nweeks:, :], pred_data[-nweeks-1:-1, :], states, counties, c2s)
+    error_mat, error_state, error_week = error(real_data[-nweeks:, :], pred_data[-nweeks:, :], states, counties, c2s)
     _, error_state1, error_week1       = statewise_error(real_data[-nweeks:, :], ut_data[-nweeks-1:-1, :], states, counties, c2s)
     _, error_state2, error_week2       = statewise_error(real_data[-nweeks:, :], lanl_data[-nweeks-1:-1, :], states, counties, c2s)
     _, error_state3, error_week3       = statewise_error(real_data[-nweeks:, :], mobs_data[-nweeks-1:-1, :], states, counties, c2s)
@@ -268,18 +268,21 @@ if __name__ == "__main__":
 
     # IN-SAMPLE ESTIMATION 
     real_death      = np.load("mat/death_1-17.npy")      # [ n_weeks, n_counties ]
+    pred_death      = np.load("mat/onestep/onestep.npy") # [ 15, n_counties ]
     est_death       = np.load("mat/insample/model.npy")  
     est_death_nocov = np.load("mat/insample/no_cov.npy")
     est_death_nomob = np.load("mat/insample/no_mob.npy")
+    print(pred_death.shape)
+
     # make negative values zero
     est_death[est_death<0]             = 0
     est_death_nocov[est_death_nocov<0] = 0
     est_death_nomob[est_death_nomob<0] = 0
 
-    data = [ real_death, est_death, est_death_nocov, est_death_nomob ]
-    est_error_heatmap(data, states, counties, c2s, real_dates, nweeks=45, modelname="est-death-error")
+    # data = [ real_death, est_death, est_death_nocov, est_death_nomob ]
+    # est_error_heatmap(data, states, counties, c2s, real_dates, nweeks=45, modelname="est-death-error")
 
     # OUT-OF-SAMPLE PREDICTION
-    # preds = statewise_baselines_loader()
-    # data  = [ real_death, est_death, preds["UT"], preds["LANL"], preds["MOBS"], preds["IHME"] ]
-    # pred_error_heatmap(data, states, counties, c2s, real_dates, nweeks=15, modelname="pred-death-error")
+    preds = statewise_baselines_loader()
+    data  = [ real_death, pred_death, preds["UT"], preds["LANL"], preds["MOBS"], preds["IHME"] ]
+    pred_error_heatmap(data, states, counties, c2s, real_dates, nweeks=15, modelname="pred-death-error")

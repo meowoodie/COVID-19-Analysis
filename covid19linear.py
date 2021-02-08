@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
+import numpy as np
 from torch.autograd import Variable
 import arrow
 
@@ -59,6 +59,7 @@ class COVID19linear(nn.Module):
 
 		# non-zero entries of matrices Lambda (spatio-temporal dependences)
 		n_nonzero       = len(np.where(adj == 1)[0])
+		self.coords     = torch.LongTensor(np.where(adj == 1))
 		self.B_nonzero  = nn.ParameterList([])
 		self.A_nonzero  = nn.ParameterList([])
 		self.H_nonzero  = nn.ParameterList([])
@@ -66,12 +67,7 @@ class COVID19linear(nn.Module):
 			self.B_nonzero.append(torch.nn.Parameter(torch.randn((n_nonzero), requires_grad=True)))
 			self.A_nonzero.append(torch.nn.Parameter(torch.randn((n_nonzero), requires_grad=True)))
 			self.H_nonzero.append(torch.nn.Parameter(torch.randn((n_nonzero), requires_grad=True)))
-		# matrices Lambda
-		coords          = torch.LongTensor(np.where(adj == 1))
-		self.B          = [ torch.sparse.FloatTensor(coords, self.B_nonzero[tau], torch.Size([n_counties, n_counties])).to_dense() for tau in range(p) ]
-		self.A          = [ torch.sparse.FloatTensor(coords, self.A_nonzero[tau], torch.Size([n_counties, n_counties])).to_dense() for tau in range(p) ]
-		self.H          = [ torch.sparse.FloatTensor(coords, self.H_nonzero[tau], torch.Size([n_counties, n_counties])).to_dense() for tau in range(p) ]
-
+		
 		# community mobility
 		self.mu         = torch.nn.Parameter(torch.randn(n_mobility, self.p), requires_grad=True)
 		self.nu         = torch.nn.Parameter(torch.randn(n_mobility, self.p), requires_grad=True)
@@ -80,7 +76,7 @@ class COVID19linear(nn.Module):
 		self.zeta       = torch.nn.Parameter(torch.randn(n_covariates), requires_grad=True)
 
 		# exponential decaying factor
-		self.theta      = 1000. # torch.nn.Parameter(torch.ones(1).float(), requires_grad=True)
+		self.theta      = 1e3 # torch.nn.Parameter(torch.ones(1).float(), requires_grad=True)
 		# covariance matrix
 		self.Sigma      = self.theta * torch.exp(-self.theta * self.dist) # [ n_counties, n_counties ]
 
@@ -104,19 +100,19 @@ class COVID19linear(nn.Module):
 		T, n_counties = C.shape
 		inv           = torch.inverse(self.Sigma)
 		# Add up the loss for each week with exponentially decreasing weights
-		# D_loss = torch.stack([ self.l2loss(D[i], D_hat[i], inv) for i in range(T) ]).sum()
-		# C_loss = torch.stack([ self.l2loss(C[i], C_hat[i], inv) for i in range(T) ]).sum()
+		D_loss = torch.stack([ self.l2loss(D[i], D_hat[i], inv) for i in range(T) ]).sum()
+		C_loss = torch.stack([ self.l2loss(C[i], C_hat[i], inv) for i in range(T) ]).sum()
 
-		D_loss = torch.stack([ 0.99 ** (T - i) * self.l2loss(D[i], D_hat[i], inv) for i in range(T) ]).sum()
-		C_loss = torch.stack([ 0.99 ** (T - i) * self.l2loss(C[i], C_hat[i], inv) for i in range(T) ]).sum()
+		# D_loss = torch.stack([ 0.99 ** (T - i) * self.l2loss(D[i], D_hat[i], inv) for i in range(T) ]).sum()
+		# C_loss = torch.stack([ 0.99 ** (T - i) * self.l2loss(C[i], C_hat[i], inv) for i in range(T) ]).sum()
 
 		B_nonzeros = torch.stack([ self.B_nonzero[tau] for tau in range(self.p) ], 1)
 		A_nonzeros = torch.stack([ self.A_nonzero[tau] for tau in range(self.p) ], 1)
 		H_nonzeros = torch.stack([ self.H_nonzero[tau] for tau in range(self.p) ], 1)
-		# Calculate the l1 norm
-		l1_norm = torch.norm(B_nonzeros, p=1) + torch.norm(A_nonzeros, p=1) + torch.norm(H_nonzeros, p=1)
-		# Calculate the l2 norm
-		l2_norm = torch.norm(B_nonzeros, p=2) + torch.norm(A_nonzeros, p=2) + torch.norm(H_nonzeros, p=2)
+		# # Calculate the l1 norm
+		# l1_norm = torch.norm(B_nonzeros, p=1) + torch.norm(A_nonzeros, p=1) + torch.norm(H_nonzeros, p=1)
+		# # Calculate the l2 norm
+		# l2_norm = torch.norm(B_nonzeros, p=2) + torch.norm(A_nonzeros, p=2) + torch.norm(H_nonzeros, p=2)
 		# print("obj: %.5e\tl1 norm: %.5e\tl2 norm: %.5e." % ((0.9 * D_loss + 0.1 * C_loss) / (T * n_counties), self.l1ratio * l1_norm, self.l2ratio * l2_norm))
 		return (0.9 * D_loss + 0.1 * C_loss) / (T * n_counties) # + self.l1ratio * l1_norm + self.l2ratio * l2_norm
 
@@ -140,6 +136,11 @@ class COVID19linear(nn.Module):
 		'''
 		Customized forward function
 		'''
+		# construct spatial coefficents.
+		self.B = [ torch.sparse.FloatTensor(self.coords, self.B_nonzero[tau], torch.Size([self.n_counties, self.n_counties])).to_dense() for tau in range(self.p) ]
+		self.A = [ torch.sparse.FloatTensor(self.coords, self.A_nonzero[tau], torch.Size([self.n_counties, self.n_counties])).to_dense() for tau in range(self.p) ]
+		self.H = [ torch.sparse.FloatTensor(self.coords, self.H_nonzero[tau], torch.Size([self.n_counties, self.n_counties])).to_dense() for tau in range(self.p) ]
+
 		C_hat, D_hat = [], []
 		T = C.shape[0]
 		for t in range(self.p, T):
@@ -179,5 +180,8 @@ class COVID19linear(nn.Module):
 		# Make predictions
 		c_hat = c2c + (mt * mu).sum(0).sum(0) + torch.matmul(self.upsilon, cov)    # [ n_counties ]
 		d_hat = c2d + d2d + (mt * nu).sum(0).sum(0) + torch.matmul(self.zeta, cov) # [ n_counties ]
+
+		c_hat = torch.nn.functional.softplus(c_hat)
+		d_hat = torch.nn.functional.softplus(d_hat)
 
 		return c_hat, d_hat # [ n_counties ]

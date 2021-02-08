@@ -103,15 +103,20 @@ if __name__ == "__main__":
   
     # DATA 
     real_death      = np.load("mat/death_1-17.npy")      # [ n_weeks, n_counties ]
-    est_death       = np.load("mat/insample/model.npy")  
+    pred_death      = np.load("mat/onestep/onestep.npy") # [ 15, n_counties ]
+    # est_death       = np.load("mat/insample/model.npy")  
+    est_death       = np.load("predictions/in-sample-deaths.npy")  
     est_death_nocov = np.load("mat/insample/no_cov.npy")
     est_death_nomob = np.load("mat/insample/no_mob.npy")
+    print(est_death.shape)
+
     # make negative values zero
     est_death[est_death<0]             = 0
     est_death_nocov[est_death_nocov<0] = 0
     est_death_nomob[est_death_nomob<0] = 0
 
     state_real_death      = merge_counties_by_states(real_death, states, counties, c2s)      # [ n_weeks, n_states ]
+    state_pred_death      = merge_counties_by_states(pred_death, states, counties, c2s)      
     state_est_death       = merge_counties_by_states(est_death, states, counties, c2s)
     state_est_death_nocov = merge_counties_by_states(est_death_nocov, states, counties, c2s)
     state_est_death_nomob = merge_counties_by_states(est_death_nomob, states, counties, c2s)
@@ -119,51 +124,51 @@ if __name__ == "__main__":
 
     print(state_real_death.shape, state_est_death.shape, state_est_death_nocov.shape, state_est_death_nomob.shape)
 
-    # # IN-SAMPLE
-    # # nationwide
-    # nweeks = 45
-    # dates  = real_dates[-nweeks:]
-    # data   = [ 
-    #     real_death.sum(1)[-nweeks:],
-    #     state_est_death.sum(1)[-nweeks-1:-1],
-    #     state_est_death_nomob.sum(1)[-nweeks-1:-1],
-    #     state_est_death_nocov.sum(1)[-nweeks-1:-1]
-    # ]
-    # death_state_est_linechart("the U.S.", data, dates)
-    # # statewide
-    # for i, state in enumerate(states):
-    #     data = [ 
-    #         state_real_death[-nweeks:, i],
-    #         state_est_death[-nweeks-1:-1, i],
-    #         state_est_death_nomob[-nweeks-1:-1, i],
-    #         state_est_death_nocov[-nweeks-1:-1, i]
-    #     ]
-    #     death_state_est_linechart(state, data, dates)
-
-    # OUT-OF-SAMPLE
+    # IN-SAMPLE
     # nationwide
-    nweeks = 15
+    nweeks = 45
     dates  = real_dates[-nweeks:]
     data   = [ 
         real_death.sum(1)[-nweeks:],
-        real_death.sum(1)[-nweeks:],
-        preds["UT"].sum(1)[-nweeks-1:-1],
-        preds["LANL"].sum(1)[-nweeks-1:-1],
-        preds["MOBS"].sum(1)[-nweeks-1:-1],
-        preds["IHME"].sum(1)[-nweeks-1:-1],
+        state_est_death.sum(1)[-nweeks-1:-1],
+        state_est_death_nomob.sum(1)[-nweeks-1:-1],
+        state_est_death_nocov.sum(1)[-nweeks-1:-1]
     ]
-    death_state_pred_linechart("the U.S.", data, dates)
+    death_state_est_linechart("the U.S.", data, dates)
     # statewide
     for i, state in enumerate(states):
         data = [ 
             state_real_death[-nweeks:, i],
-            state_real_death[-nweeks:, i],
-            preds["UT"][-nweeks-1:-1, i],
-            preds["LANL"][-nweeks-1:-1, i],
-            preds["MOBS"][-nweeks-1:-1, i],
-            preds["IHME"][-nweeks-1:-1, i],
+            state_est_death[-nweeks-1:-1, i],
+            state_est_death_nomob[-nweeks-1:-1, i],
+            state_est_death_nocov[-nweeks-1:-1, i]
         ]
-        death_state_pred_linechart(state, data, dates)
+        death_state_est_linechart(state, data, dates)
+
+    # # OUT-OF-SAMPLE
+    # # nationwide
+    # nweeks = 15
+    # dates  = real_dates[-nweeks:]
+    # data   = [ 
+    #     real_death.sum(1)[-nweeks:],
+    #     pred_death.sum(1)[-nweeks:],
+    #     preds["UT"].sum(1)[-nweeks-1:-1],
+    #     preds["LANL"].sum(1)[-nweeks-1:-1],
+    #     preds["MOBS"].sum(1)[-nweeks-1:-1],
+    #     preds["IHME"].sum(1)[-nweeks-1:-1],
+    # ]
+    # death_state_pred_linechart("the U.S.", data, dates)
+    # # statewide
+    # for i, state in enumerate(states):
+    #     data = [ 
+    #         state_real_death[-nweeks:, i],
+    #         state_pred_death[-nweeks:, i],
+    #         preds["UT"][-nweeks-1:-1, i],
+    #         preds["LANL"][-nweeks-1:-1, i],
+    #         preds["MOBS"][-nweeks-1:-1, i],
+    #         preds["IHME"][-nweeks-1:-1, i],
+    #     ]
+    #     death_state_pred_linechart(state, data, dates)
 
 
 
