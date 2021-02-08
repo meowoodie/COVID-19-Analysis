@@ -114,7 +114,7 @@ class COVID19linear(nn.Module):
 		# # Calculate the l2 norm
 		# l2_norm = torch.norm(B_nonzeros, p=2) + torch.norm(A_nonzeros, p=2) + torch.norm(H_nonzeros, p=2)
 		# print("obj: %.5e\tl1 norm: %.5e\tl2 norm: %.5e." % ((0.9 * D_loss + 0.1 * C_loss) / (T * n_counties), self.l1ratio * l1_norm, self.l2ratio * l2_norm))
-		return (0.9 * D_loss + 0.1 * C_loss) / (T * n_counties) # + self.l1ratio * l1_norm + self.l2ratio * l2_norm
+		return (0.99 * D_loss + 0.01 * C_loss) / (T * n_counties) # + self.l1ratio * l1_norm + self.l2ratio * l2_norm
 
 	def l2loss(self, y, yhat, sigmaInv):
 		'''

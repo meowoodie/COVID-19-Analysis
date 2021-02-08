@@ -73,9 +73,10 @@ model = COVID19linear(
     n_counties=n_counties, n_mobility=n_mobility, n_covariates=n_covariates)
 
 # Use Adam optimizer for optimization with exponential learning rate
-optimizer = optim.Adam(model.parameters(), lr=2e-2)
-decayRate = 0.99
-my_lr_scheduler = torch.optim.lr_scheduler.ExponentialLR(optimizer=optimizer, gamma=decayRate)
+# optimizer = optim.Adam(model.parameters(), lr=2e-2)
+# decayRate = 0.99
+# my_lr_scheduler = torch.optim.lr_scheduler.ExponentialLR(optimizer=optimizer, gamma=decayRate)
+optimizer  = optim.SGD(model.parameters(), lr=2e-2, momentum=0.99)
 
 # Complete training
 for i in range(5000):
