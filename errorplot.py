@@ -29,10 +29,12 @@ def est_error_heatmap(data, states, counties, c2s, dates, nweeks, modelname):
     est_data       = data[1]
     est_data_nocov = data[2]
     est_data_nomob = data[3]
+    est_data_ar    = data[4]
 
     error_mat, error_state, error_week    = error(real_data[-nweeks:, :], est_data[-nweeks-1:-1, :], states, counties, c2s)
     error_mat1, error_state1, error_week1 = error(real_data[-nweeks:, :], est_data_nomob[-nweeks-1:-1, :], states, counties, c2s)
     error_mat2, error_state2, error_week2 = error(real_data[-nweeks:, :], est_data_nocov[-nweeks-1:-1, :], states, counties, c2s)
+    error_mat3, error_state3, error_week3 = error(real_data[-nweeks:, :], est_data_ar[-nweeks-1:-1, :], states, counties, c2s)
     print(error_mat.shape)
     print(len(dates))
 
@@ -45,6 +47,7 @@ def est_error_heatmap(data, states, counties, c2s, dates, nweeks, modelname):
     error_state  = error_state[rev_states_order]
     error_state1 = error_state1[rev_states_order]
     error_state2 = error_state2[rev_states_order]
+    error_state3 = error_state3[rev_states_order]
 
     plt.rc('text', usetex=True)
     font = {
@@ -85,13 +88,15 @@ def est_error_heatmap(data, states, counties, c2s, dates, nweeks, modelname):
         ax_imshow.set_xticklabels(dates, rotation=90)
 
         # the error vector for states and weeks
-        ax_state.plot(np.log(error_state + 1e-5), np.arange(50), c="red", linewidth=2, linestyle="-", label="STVA", alpha=.5)
-        ax_state.plot(np.log(error_state1 + 1e-5), np.arange(50), c="blue", linewidth=1.5, linestyle="--", label=r"STVA$-$mobility", alpha=.5)
-        ax_state.plot(np.log(error_state2 + 1e-5), np.arange(50), c="green", linewidth=1.5, linestyle="--", label=r"STVA$-$census", alpha=.5)
+        ax_state.plot(error_state, np.arange(50), c="red", linewidth=2, linestyle="-", label="STVA", alpha=.5)
+        ax_state.plot(error_state1, np.arange(50), c="blue", linewidth=1.5, linestyle="--", label=r"STVA$-$mobility", alpha=.5)
+        ax_state.plot(error_state2, np.arange(50), c="green", linewidth=1.5, linestyle="--", label=r"STVA$-$census", alpha=.5)
+        ax_state.plot(error_state3, np.arange(50), c="gray", linewidth=1.5, linestyle="--", label=r"STVA$-$spatial", alpha=.5)
 
-        ax_week.plot(np.log(error_week + 1e-5), c="red", linewidth=2, linestyle="-", label="STVA", alpha=.5)
-        ax_week.plot(np.log(error_week1 + 1e-5), c="blue", linewidth=1.5, linestyle="--", label=r"STVA$-$mobility", alpha=.5)
-        ax_week.plot(np.log(error_week2 + 1e-5), c="green", linewidth=1.5, linestyle="--", label=r"STVA$-$census", alpha=.5)
+        ax_week.plot(error_week, c="red", linewidth=2, linestyle="-", label="STVA", alpha=.5)
+        ax_week.plot(error_week1, c="blue", linewidth=1.5, linestyle="--", label=r"STVA$-$mobility", alpha=.5)
+        ax_week.plot(error_week2, c="green", linewidth=1.5, linestyle="--", label=r"STVA$-$census", alpha=.5)
+        ax_week.plot(error_week3, c="gray", linewidth=1.5, linestyle="--", label=r"STVA$-$spatial", alpha=.5)
 
         ax_state.get_yaxis().set_ticks([])
         ax_state.get_xaxis().set_ticks([])
@@ -205,24 +210,24 @@ def pred_error_heatmap(data, states, counties, c2s, dates, nweeks, modelname):
 
         # the error matrix for counties in states:
         cmap = matplotlib.cm.get_cmap('magma')
-        img  = ax_imshow.imshow(np.log(error_mat + 1e-5), cmap=cmap, extent=[0,nweeks,0,50], aspect=float(nweeks)/50.)
+        img  = ax_imshow.imshow(np.log(error_mat + 1e-1), cmap=cmap, extent=[0,nweeks,0,50], aspect=float(nweeks)/50.)
         ax_imshow.set_yticks(np.arange(50))
         ax_imshow.set_yticklabels(states)
         ax_imshow.set_xticks(np.arange(nweeks))
         ax_imshow.set_xticklabels(dates, rotation=90)
 
         # the error vector for states and weeks
-        ax_state.plot(np.log(error_state + 1e-5), np.arange(50), c="red", linewidth=2, linestyle="-", label="STVA", alpha=.5)
-        ax_state.plot(np.log(error_state1 + 1e-5), np.arange(50), c="blue", linewidth=1.5, linestyle="--", label="UT", alpha=.5)
-        ax_state.plot(np.log(error_state2 + 1e-5), np.arange(50), c="green", linewidth=1.5, linestyle="--", label="LANL", alpha=.5)
-        ax_state.plot(np.log(error_state3 + 1e-5), np.arange(50), c="purple", linewidth=1.5, linestyle="--", label="MOBS", alpha=.5)
-        ax_state.plot(np.log(error_state4 + 1e-5), np.arange(50), c="orange", linewidth=1.5, linestyle="--", label="IHME", alpha=.5)
+        ax_state.plot(error_state, np.arange(50), c="red", linewidth=2, linestyle="-", label="STVA", alpha=.5)
+        ax_state.plot(error_state1, np.arange(50), c="blue", linewidth=1.5, linestyle="--", label="UT", alpha=.5)
+        ax_state.plot(error_state2, np.arange(50), c="green", linewidth=1.5, linestyle="--", label="LANL", alpha=.5)
+        ax_state.plot(error_state3, np.arange(50), c="purple", linewidth=1.5, linestyle="--", label="MOBS", alpha=.5)
+        ax_state.plot(error_state4, np.arange(50), c="orange", linewidth=1.5, linestyle="--", label="IHME", alpha=.5)
 
-        ax_week.plot(np.log(error_week + 1e-5), c="red", linewidth=2, linestyle="-", label="STVA", alpha=.5)
-        ax_week.plot(np.log(error_week1 + 1e-5), c="blue", linewidth=1.5, linestyle="--", label="UT", alpha=.5)
-        ax_week.plot(np.log(error_week2 + 1e-5), c="green", linewidth=1.5, linestyle="--", label="LANL", alpha=.5)
-        ax_week.plot(np.log(error_week3 + 1e-5), c="purple", linewidth=1.5, linestyle="--", label="MOBS", alpha=.5)
-        ax_week.plot(np.log(error_week4 + 1e-5), c="orange", linewidth=1.5, linestyle="--", label="IHME", alpha=.5)
+        ax_week.plot(error_week, c="red", linewidth=2, linestyle="-", label="STVA", alpha=.5)
+        ax_week.plot(error_week1, c="blue", linewidth=1.5, linestyle="--", label="UT", alpha=.5)
+        ax_week.plot(error_week2, c="green", linewidth=1.5, linestyle="--", label="LANL", alpha=.5)
+        ax_week.plot(error_week3, c="purple", linewidth=1.5, linestyle="--", label="MOBS", alpha=.5)
+        ax_week.plot(error_week4, c="orange", linewidth=1.5, linestyle="--", label="IHME", alpha=.5)
 
         ax_state.get_yaxis().set_ticks([])
         ax_state.get_xaxis().set_ticks([])
@@ -245,8 +250,8 @@ def pred_error_heatmap(data, states, counties, c2s, dates, nweeks, modelname):
         cbaxes.patch.set_visible(False)
         cbar = fig.colorbar(img, cax=cbaxes)
         cbar.set_ticks([
-            np.log(error_mat + 1e-5).min(), 
-            np.log(error_mat + 1e-5).max()
+            np.log(error_mat + 1e-1).min(), 
+            np.log(error_mat + 1e-1).max()
         ])
         cbar.set_ticklabels([
             0, # "%.2e" % error_mat.min(), 
@@ -268,10 +273,11 @@ if __name__ == "__main__":
 
     # IN-SAMPLE ESTIMATION 
     real_death      = np.load("mat/death_1-17.npy")      # [ n_weeks, n_counties ]
-    pred_death      = np.load("mat/onestep/onestep.npy") # [ 15, n_counties ]
+    pred_death      = np.load("mat/onestep/onestep_relu.npy") # [ 15, n_counties ]
     est_death       = np.load("mat/insample/model.npy")  
     est_death_nocov = np.load("mat/insample/no_cov.npy")
     est_death_nomob = np.load("mat/insample/no_mob.npy")
+    est_death_ar    = np.load("mat/insample/ar.npy").transpose()
     print(pred_death.shape)
 
     # make negative values zero
@@ -279,10 +285,10 @@ if __name__ == "__main__":
     est_death_nocov[est_death_nocov<0] = 0
     est_death_nomob[est_death_nomob<0] = 0
 
-    # data = [ real_death, est_death, est_death_nocov, est_death_nomob ]
-    # est_error_heatmap(data, states, counties, c2s, real_dates, nweeks=45, modelname="est-death-error")
+    data = [ real_death, est_death, est_death_nocov, est_death_nomob, est_death_ar ]
+    est_error_heatmap(data, states, counties, c2s, real_dates, nweeks=45, modelname="est-death-error")
 
-    # OUT-OF-SAMPLE PREDICTION
-    preds = statewise_baselines_loader()
-    data  = [ real_death, pred_death, preds["UT"], preds["LANL"], preds["MOBS"], preds["IHME"] ]
-    pred_error_heatmap(data, states, counties, c2s, real_dates, nweeks=15, modelname="pred-death-error")
+    # # OUT-OF-SAMPLE PREDICTION
+    # preds = statewise_baselines_loader()
+    # data  = [ real_death, pred_death, preds["UT"], preds["LANL"], preds["MOBS"], preds["IHME"] ]
+    # pred_error_heatmap(data, states, counties, c2s, real_dates, nweeks=15, modelname="pred-death-error")
